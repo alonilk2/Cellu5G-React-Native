@@ -5,8 +5,6 @@
   * @version 1.0.0
   */
 
-
-
 import React, { Component } from "react";
 import LinearGradient from 'react-native-linear-gradient';
 import {
@@ -42,30 +40,46 @@ class MapByAddress extends Component {
     Geocode.setLanguage("he");
     Geocode.setRegion("il");
     Geocode.enableDebug();
+    this.cutSpacesFromString();
+    let fullAddress = "רחוב "+this.state.street +", "+ this.state.city;
+    Geocode.fromAddress(fullAddress).then(
+      response => {
+          const { lat, lng } = response.results[0].geometry.location;
+          var firstProjection = "+proj=tmerc +lat_0=31.73439361111111 +lon_0=35.20451694444445 +k=1.0000067 +x_0=219529.584 +y_0=626907.39 +ellps=GRS80 +towgs84=-48,55,52,0,0,0,0 +units=m +no_defs";
+          this.setState({position: proj4(firstProjection,[lng,lat])});
+      },
+      error => {
+          console.error(error);
+      }
+    );
+  }
+  /**
+    * Any city name from DATA.CO.IL Gov api is 50 characters long, filled with name string and space chars.
+    * cutSpacesFromString removes unwanted space chars from the end of the city name string.
+    *
+    * @param e A nativeEvent contains list of antennas sent from WebView.
+    * @author [Alon Barenboim]
+   */
+  cutSpacesFromString() {
     let cityName = this.props.route.params.city;
     let nameLen = cityName.length;
     for(let x = nameLen-1; x > 0; x--) {
-        if(cityName.charAt(x) === ' ')
-            continue;
-        else {
-            let temp = cityName.substring(0, x+1)
-            this.state.city = temp;
-            x = 0;
-        }
+      if(cityName.charAt(x) === ' ')
+          continue;
+      else {
+          let temp = cityName.substring(0, x+1)
+          this.state.city = temp;
+          x = 0;
+      }
     }
-    let fullAddress = "רחוב "+this.state.street +", "+ this.state.city;
-    Geocode.fromAddress(fullAddress).then(
-    response => {
-        const { lat, lng } = response.results[0].geometry.location;
-        var firstProjection = "+proj=tmerc +lat_0=31.73439361111111 +lon_0=35.20451694444445 +k=1.0000067 +x_0=219529.584 +y_0=626907.39 +ellps=GRS80 +towgs84=-48,55,52,0,0,0,0 +units=m +no_defs";
-        this.setState({position: proj4(firstProjection,[lng,lat])});
-    },
-    error => {
-        console.error(error);
-    }
-    );
   }
-
+  /**
+    * handleMessage gets an event from WebView and handles the event.
+    * It gets a nativeEvent contains list of antennas, sorts and saves it in retDataFromWeb state.
+    *
+    * @param e A nativeEvent contains list of antennas sent from WebView.
+    * @author [Alon Barenboim]
+   */
   handleMessage = (e) => {
     let data = JSON.parse(e.nativeEvent.data);
     let x=0, y=0;
@@ -76,12 +90,12 @@ class MapByAddress extends Component {
                 let min = parseInt(data[x].distance);
                 sortedList[x] = data[x];
                 for(y = x+1; y < data.length; y++) {
-                if(parseInt(data[y].distance) < min){
-                    min = parseInt(data[y].distance);
-                    let temp = sortedList[x];
-                    sortedList[x] = data[y];
-                    data[y] = temp;
-                }
+                  if(parseInt(data[y].distance) < min){
+                      min = parseInt(data[y].distance);
+                      let temp = sortedList[x];
+                      sortedList[x] = data[y];
+                      data[y] = temp;
+                  }
                 }
             }
         } else console.log("data error");
@@ -89,7 +103,12 @@ class MapByAddress extends Component {
     if(sortedList.length > 0) this.setState({retDataFromWeb: sortedList, isLoading: false});
     else return false
   }
-
+  /**
+    * antennaList creates list of AntennaBlocks out of each antenna located near the user
+    * for displaying.
+    *
+    * @author [Alon Barenboim]
+   */
   antennaList = () => {
       if(this.state.retDataFromWeb) {   
           let list = this.state.retDataFromWeb.map((res) =>

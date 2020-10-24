@@ -39,26 +39,12 @@ class ByLocation extends Component {
     changeNavigationBarColor('transparent', true);
     this.fetchData();
   }
-  requestLocationPermission = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(
-     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: "Cellu Location Permission",
-        message: "Cellu wants to access your location. ",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
-      }
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      
-    } else {
-      console.log("location permission denied");
-    }
-  } catch (err) {
-    console.warn(err);
-  }};
+  /**
+    * getPermissions asks for Location Permission from the user when invoked.
+    * Returns a Promise which awaits the permission.
+    * 
+    * @author [Alon Barenboim]
+   */
   getPermissions() {
     return new Promise(async(resolve, reject) => {
       const permissions = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
@@ -69,6 +55,11 @@ class ByLocation extends Component {
       else reject(false);
     });
   }
+  /**
+    * fetchData gets current GPS location using Geolocation API, translates long-lat to (X,Y) Israeli Transverse Mecator coordinates and saves the position.
+    * 
+    * @author [Alon Barenboim]
+   */
   fetchData() {
     this.getPermissions().then((res)=> {
     Geolocation.getCurrentPosition(
@@ -79,12 +70,18 @@ class ByLocation extends Component {
       (error) => {
         console.log(error.code, error.message);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 })
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 })
     }).catch((Err)=>{
       console.log("me"+Err);
     });
   }
-
+  /**
+    * handleMessage gets an event from WebView and handles the event.
+    * It gets a nativeEvent contains list of antennas, sorts and saves it in retDataFromWeb state.
+    *
+    * @param e A nativeEvent contains list of antennas sent from WebView.
+    * @author [Alon Barenboim]
+   */
   handleMessage = (e) => {
     let data = JSON.parse(e.nativeEvent.data);
     let x=0, y=0;
@@ -108,7 +105,12 @@ class ByLocation extends Component {
     if(sortedList.length > 0) this.setState({retDataFromWeb: sortedList, isLoading: false});
     else return false
   }
-
+  /**
+    * antennaList creates list of AntennaBlocks out of each antenna located near the user
+    * for displaying.
+    *
+    * @author [Alon Barenboim]
+   */
   antennaList = () => {
       if(this.state.retDataFromWeb) {   
           let list = this.state.retDataFromWeb.map((res) =>
