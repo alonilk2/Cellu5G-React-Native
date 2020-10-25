@@ -31,47 +31,33 @@ class MapByAddress extends Component {
       behavior: 'position',
       position: [],
       retDataFromWeb: [],
-      city: "",
+      city: props.route.params.city,
       street: props.route.params.street,
       isLoading: true
     }
     changeNavigationBarColor('transparent', true);
+
+  }
+  componentDidMount() {
+     this.getGeolocation().then(this.setState({...this.state}));
+  }
+  getGeolocation() {
     Geocode.setApiKey("AIzaSyCtP-auXe-kPUJMvxOZxiDACspzitfnlFo");
     Geocode.setLanguage("he");
     Geocode.setRegion("il");
     Geocode.enableDebug();
-    this.cutSpacesFromString();
-    let fullAddress = "רחוב "+this.state.street +", "+ this.state.city;
-    Geocode.fromAddress(fullAddress).then(
+    let fullAddress = this.state.street +", "+ this.state.city;
+    return new Promise((resolve, reject) => {
+      Geocode.fromAddress(fullAddress).then(
       response => {
           const { lat, lng } = response.results[0].geometry.location;
           var firstProjection = "+proj=tmerc +lat_0=31.73439361111111 +lon_0=35.20451694444445 +k=1.0000067 +x_0=219529.584 +y_0=626907.39 +ellps=GRS80 +towgs84=-48,55,52,0,0,0,0 +units=m +no_defs";
-          this.setState({position: proj4(firstProjection,[lng,lat])});
+          resolve(this.setState({position: proj4(firstProjection,[lng,lat])}));
       },
       error => {
-          console.error(error);
-      }
-    );
-  }
-  /**
-    * Any city name from DATA.CO.IL Gov api is 50 characters long, filled with name string and space chars.
-    * cutSpacesFromString removes unwanted space chars from the end of the city name string.
-    *
-    * @param e A nativeEvent contains list of antennas sent from WebView.
-    * @author [Alon Barenboim]
-   */
-  cutSpacesFromString() {
-    let cityName = this.props.route.params.city;
-    let nameLen = cityName.length;
-    for(let x = nameLen-1; x > 0; x--) {
-      if(cityName.charAt(x) === ' ')
-          continue;
-      else {
-          let temp = cityName.substring(0, x+1)
-          this.state.city = temp;
-          x = 0;
-      }
-    }
+          reject(console.error(error));
+      })
+    })
   }
   /**
     * handleMessage gets an event from WebView and handles the event.
@@ -84,24 +70,28 @@ class MapByAddress extends Component {
     let data = JSON.parse(e.nativeEvent.data);
     let x=0, y=0;
     let sortedList = [];
-    if(data) {
-        if(data.length > 0) {
-            for(x = 0; x < data.length-1; x++){
-                let min = parseInt(data[x].distance);
-                sortedList[x] = data[x];
-                for(y = x+1; y < data.length; y++) {
-                  if(parseInt(data[y].distance) < min){
-                      min = parseInt(data[y].distance);
-                      let temp = sortedList[x];
-                      sortedList[x] = data[y];
-                      data[y] = temp;
+    return new Promise((resolve, reject) => {
+      if(data) {
+          if(data.length > 0) {
+              for(x = 0; x < data.length-1; x++){
+                  let min = parseInt(data[x].distance);
+                  sortedList[x] = data[x];
+                  for(y = x+1; y < data.length; y++) {
+                    if(parseInt(data[y].distance) < min){
+                        min = parseInt(data[y].distance);
+                        let temp = sortedList[x];
+                        sortedList[x] = data[y];
+                        data[y] = temp;
+                    }
                   }
-                }
-            }
-        } else console.log("data error");
-    }
-    if(sortedList.length > 0) this.setState({retDataFromWeb: sortedList, isLoading: false});
-    else return false
+              }
+          } else console.log("data error");
+      }
+      else {resolve(this.state.isLodaing = false)}
+      resolve(this.setState({retDataFromWeb: sortedList, isLoading: false}));
+      reject('error');
+    })
+
   }
   /**
     * antennaList creates list of AntennaBlocks out of each antenna located near the user
@@ -110,14 +100,27 @@ class MapByAddress extends Component {
     * @author [Alon Barenboim]
    */
   antennaList = () => {
-      if(this.state.retDataFromWeb) {   
+      if(this.state.retDataFromWeb.length > 0) {   
           let list = this.state.retDataFromWeb.map((res) =>
               <AntennaBlock key={res.Fields[1].Value} fields={res.Fields} dis={res.distance}/>
           );
           return (list);
-      } 
+      }
+      else {
+          return (
+            <View style={{marginTop: '10%'}}>
+              <Text style={{fontFamily: "SF-Pro-Text-Bold", alignSelf: 'center', fontSize: 40}}> OOPS... </Text>
+              <Text style={{alignSelf: 'center'}}> Seems like there are no Antennas close to this place... </Text>
+            </View>
+          )
+      }
   }
-
+  handleListView = () => {
+    if(this.state.isLoading) {
+      console.log(this.state.isLoading);
+      return (<ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginTop: '20%'}}/>)}
+    else return (this.antennaList())
+  }
   render() {
     let jsCode = `x1=`+this.state.position[0]+`; y1=`+this.state.position[1]+`;
                   govmap.zoomToXY({ x:`+this.state.position[0]+`, y: `+this.state.position[1]+`, level:7, marker: true });
@@ -157,8 +160,7 @@ class MapByAddress extends Component {
         </View>
         <ScrollView style={styles.Body}>
           <Text style={{fontFamily: 'SF-Pro-Text-Semibold', fontSize: 20, marginLeft: 10, marginTop: 15}}>NEARBY ANTENNAS:</Text>
-          {this.state.isLoading ? <ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginTop: '20%'}}/> 
-          : this.antennaList() }
+            {this.handleListView()}
         </ScrollView>
       </View>
     );

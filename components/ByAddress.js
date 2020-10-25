@@ -52,7 +52,31 @@ export class ByAddress extends Component {
       }
       return citiesNamesArr;
     }
-
+    handleListItemClick(item) {
+      let newItem = this.cutSpacesFromString(item)
+      this.setState({query: newItem});
+      this.props.navigation.navigate('StreetList', {item: newItem})
+    }
+    /**
+    * Any city name from DATA.CO.IL Gov api is 50 characters long, filled with name string and space chars.
+    * cutSpacesFromString removes unwanted space chars from the end of the city name string.
+    *
+    * @param e A nativeEvent contains list of antennas sent from WebView.
+    * @author [Alon Barenboim]
+    */
+    cutSpacesFromString(str) {
+      let Name = str
+      let nameLen = Name.length;
+      for(let x = nameLen-1; x > 0; x--) {
+        if(Name.charAt(x) === ' ')
+            continue;
+        else {
+            let temp = Name.substring(0, x+1)
+            return temp;
+            x = 0;
+        }
+      }
+    }
     render () {
       return (
         <View style={styles.MainContainer}>
@@ -76,7 +100,7 @@ export class ByAddress extends Component {
                     </View>
                   )}
                   renderItem={({ item, i }) => (
-                    <TouchableOpacity key={item} onPress={() => {this.setState({ query: item, cityFlag: true }); this.props.navigation.navigate('StreetList', {item: item})}}>
+                    <TouchableOpacity key={item} onPress={() => {this.handleListItemClick(item)}}>
                       <Text style={styles.itemText}>{item}</Text>
                     </TouchableOpacity>
                   )}
@@ -165,7 +189,6 @@ export class StreetList extends Component {
           </ImageBackground>
         </View>      
     )
-
   }
 }
 

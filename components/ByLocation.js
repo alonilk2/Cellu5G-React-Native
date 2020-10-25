@@ -70,7 +70,7 @@ class ByLocation extends Component {
       (error) => {
         console.log(error.code, error.message);
       },
-      { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 })
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 })
     }).catch((Err)=>{
       console.log("me"+Err);
     });
@@ -86,24 +86,27 @@ class ByLocation extends Component {
     let data = JSON.parse(e.nativeEvent.data);
     let x=0, y=0;
     let sortedList = [];
-    if(data){
-      if(data.length > 0) {
-        for(x = 0; x < data.length-1; x++){
-          let min = parseInt(data[x].distance);
-          sortedList[x] = data[x];
-          for(y = x+1; y < data.length; y++) {
-            if(parseInt(data[y].distance) < min){
-              min = parseInt(data[y].distance);
-              let temp = sortedList[x];
-              sortedList[x] = data[y];
-              data[y] = temp;
-            }
-          }
-        }
+    return new Promise((resolve, reject) => {
+      if(data) {
+          if(data.length > 0) {
+              for(x = 0; x < data.length-1; x++){
+                  let min = parseInt(data[x].distance);
+                  sortedList[x] = data[x];
+                  for(y = x+1; y < data.length; y++) {
+                    if(parseInt(data[y].distance) < min){
+                        min = parseInt(data[y].distance);
+                        let temp = sortedList[x];
+                        sortedList[x] = data[y];
+                        data[y] = temp;
+                    }
+                  }
+              }
+          } else console.log("data error");
       }
-    } else console.log("no data");
-    if(sortedList.length > 0) this.setState({retDataFromWeb: sortedList, isLoading: false});
-    else return false
+      else {resolve(this.state.isLodaing = false)}
+      resolve(this.setState({retDataFromWeb: sortedList, isLoading: false}));
+      reject('error');
+    })
   }
   /**
     * antennaList creates list of AntennaBlocks out of each antenna located near the user
@@ -112,12 +115,20 @@ class ByLocation extends Component {
     * @author [Alon Barenboim]
    */
   antennaList = () => {
-      if(this.state.retDataFromWeb) {   
+      if(this.state.retDataFromWeb.length > 0) {   
           let list = this.state.retDataFromWeb.map((res) =>
               <AntennaBlock key={res.Fields[1].Value} fields={res.Fields} dis={res.distance}/>
           );
           return (list);
       } 
+      else {
+          return (
+            <View style={{marginTop: '10%'}}>
+              <Text style={{fontFamily: "SF-Pro-Text-Bold", alignSelf: 'center', fontSize: 40}}> OOPS... </Text>
+              <Text style={{alignSelf: 'center'}}> Seems like there are no Antennas close to this place... </Text>
+            </View>
+          )
+      }
   }
 
   render() {
