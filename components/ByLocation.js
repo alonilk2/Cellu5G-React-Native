@@ -66,6 +66,7 @@ class ByLocation extends Component {
       (pos) => {
         var firstProjection = "+proj=tmerc +lat_0=31.73439361111111 +lon_0=35.20451694444445 +k=1.0000067 +x_0=219529.584 +y_0=626907.39 +ellps=GRS80 +towgs84=-48,55,52,0,0,0,0 +units=m +no_defs";
         this.setState({position: proj4(firstProjection,[pos.coords.longitude,pos.coords.latitude])});
+        console.log("long: "+pos.coords.longitude+ " and lat: "+pos.coords.latitude+ " and position: "+this.state.position);
       },
       (error) => {
         console.log(error.code, error.message);
@@ -124,14 +125,30 @@ class ByLocation extends Component {
       else {
           return (
             <View style={{marginTop: '10%'}}>
-              <Text style={{fontFamily: "SF-Pro-Text-Bold", alignSelf: 'center', fontSize: 40}}> OOPS... </Text>
-              <Text style={{alignSelf: 'center'}}> Seems like there are no Antennas close to this place... </Text>
+              <Text style={{fontFamily: "SF-Pro-Text-Bold", alignSelf: 'center', fontSize: 40}}> אופס... </Text>
+              <Text style={{alignSelf: 'center'}}> נראה שאין אנטנות קרובות באיזור... </Text>
             </View>
           )
       }
   }
 
   render() {
+    console.log("pos: "+this.state.position);
+    if(this.state.position.length === 0){
+      return (
+        <View style={styles.MainContainer}>
+          <View style={styles.Header}>
+            <Text style={styles.Paragraph}>חיפוש לפי מיקום</Text>
+              <View style={{flex: 1, borderRadius: 30, overflow: 'hidden', marginTop: 20 }}>
+              </View>
+          </View>
+          <ScrollView style={styles.Body}>
+            <Text style={{fontFamily: 'SF-Pro-Text-Semibold', fontSize: 20, marginLeft: 10, marginTop: 15}}>אנטנות קרובות:</Text>
+            <ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginTop: '20%'}}/> 
+          </ScrollView>
+        </View>
+      )
+    }
     let jsCode = `x1=`+this.state.position[0]+`; y1=`+this.state.position[1]+`;
                   govmap.zoomToXY({ x:`+this.state.position[0]+`, y: `+this.state.position[1]+`, level:7, marker: true });
                   var res = "";
@@ -145,26 +162,13 @@ class ByLocation extends Component {
                       win.postMessage(JSON.stringify(response.data));
                   });  
                   `
-    if(this.state.orientation === "land"){ 
-      return (
-        <View style={{flex: 1}}>
-            <WebView style={{flex:1}}
-              source={{
-              uri: 'http://165.227.137.116/map1.html',
-              }}
-              injectedJavaScript={jsCode}
-              javaScriptEnabledAndroid={true}
-              onMessage={(event)=> this.handleMessage(event) }
-            />
-        </View>
-      )
-    }
     return (
       <View style={styles.MainContainer}>
         <View style={styles.Header}>
-          <Text style={styles.Paragraph}>Search By Location</Text>
+          <Text style={styles.Paragraph}>חיפוש לפי מיקום</Text>
+          <Text style={styles.SmallText}>לחץ על המפה להגדלה</Text>
             <View style={{flex: 1, borderRadius: 30, overflow: 'hidden', marginTop: 20 }}>
-              <Pressable onPress={()=> {this.props.navigation.navigate('MapView')}} style={{flex:1}}>
+              <Pressable onPress={()=> {this.props.navigation.navigate('MapView', {position: this.state.position})}} style={{flex:1}}>
                 <WebView style={{flex:1}}
                   source={{
                   uri: 'http://165.227.137.116/map1.html',
@@ -183,7 +187,7 @@ class ByLocation extends Component {
             </View>
         </View>
         <ScrollView style={styles.Body}>
-          <Text style={{fontFamily: 'SF-Pro-Text-Semibold', fontSize: 20, marginLeft: 10, marginTop: 15}}>NEARBY ANTENNAS:</Text>
+          <Text style={{fontFamily: 'SF-Pro-Text-Semibold', fontSize: 20, marginLeft: 10, marginTop: 15}}>אנטנות קרובות:</Text>
           {this.state.isLoading ? <ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginTop: '20%'}}/> 
           : this.antennaList() }
         </ScrollView>
@@ -217,6 +221,11 @@ const styles = StyleSheet.create({
     fontFamily: "SF-Pro-Text-Bold",
     fontSize: 30,
     color: 'white'
+  },
+  SmallText: {
+    fontFamily: "SF-Pro-Text",
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.3)'
   },
   CityInput: { 
     marginLeft: 20,

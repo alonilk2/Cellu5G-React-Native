@@ -109,8 +109,8 @@ class MapByAddress extends Component {
       else {
           return (
             <View style={{marginTop: '10%'}}>
-              <Text style={{fontFamily: "SF-Pro-Text-Bold", alignSelf: 'center', fontSize: 40}}> OOPS... </Text>
-              <Text style={{alignSelf: 'center'}}> Seems like there are no Antennas close to this place... </Text>
+              <Text style={{fontFamily: "SF-Pro-Text-Bold", alignSelf: 'center', fontSize: 40}}> אופס... </Text>
+              <Text style={{alignSelf: 'center'}}> נראה שאין אנטנות קרובות באיזור... </Text>
             </View>
           )
       }
@@ -138,9 +138,10 @@ class MapByAddress extends Component {
     return (
       <View style={styles.MainContainer}>
         <View style={styles.Header}>
-          <Text style={styles.Paragraph}>Search By Address</Text>
+          <Text style={styles.Paragraph}>חיפוש לפי כתובת</Text>
+          <Text style={styles.SmallText}>לחץ על המפה להגדלה</Text>
             <View style={{flex: 1, borderRadius: 30, overflow: 'hidden', marginTop: 20 }}>
-              <Pressable onPress={()=> {this.props.navigation.navigate('MapView')}} style={{flex:1}}>
+              <Pressable onPress={()=> {this.props.navigation.navigate('MapView', {position: this.state.position})}} style={{flex:1}}>
                 <WebView style={{flex:1}}
                 source={{
                 uri: 'http://165.227.137.116/map1.html',
@@ -159,7 +160,7 @@ class MapByAddress extends Component {
             </View>
         </View>
         <ScrollView style={styles.Body}>
-          <Text style={{fontFamily: 'SF-Pro-Text-Semibold', fontSize: 20, marginLeft: 10, marginTop: 15}}>NEARBY ANTENNAS:</Text>
+          <Text style={{fontFamily: 'SF-Pro-Text-Semibold', fontSize: 20, marginLeft: 10, marginTop: 15}}>אנטנות קרובות:</Text>
             {this.handleListView()}
         </ScrollView>
       </View>
@@ -193,6 +194,11 @@ const styles = StyleSheet.create({
     fontFamily: "SF-Pro-Text-Bold",
     fontSize: 30,
     color: 'white'
+  },
+  SmallText: {
+    fontFamily: "SF-Pro-Text",
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.3)'
   },
   CityInput: { 
     marginLeft: 20,

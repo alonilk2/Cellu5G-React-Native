@@ -91,7 +91,7 @@ export class ByAddress extends Component {
                   containerStyle={{zIndex:1}}
                   renderTextInput={()=> (
                     <View style={{flex:1, justifyContent:'center'}}>
-                      <Text style={styles.FormTitle}> Enter City Name </Text>
+                      <Text style={styles.FormTitle}> הכנס שם עיר </Text>
                       <TextInput
                         style={styles.TextInputStyle}
                         onChangeText={text => {this.setState({ query: text, cityFlag: false });}}
@@ -170,7 +170,7 @@ export class StreetList extends Component {
                   containerStyle={{zIndex:1}}
                   renderTextInput={()=> (
                     <View style={{flex:1, justifyContent:'center'}}>
-                      <Text style={styles.FormTitle}> Enter Street Name </Text>
+                      <Text style={styles.FormTitle}> הכנס שם רחוב </Text>
                       <TextInput
                         style={styles.TextInputStyle}
                         onChangeText={text => this.setState({ strQuery: text})}
