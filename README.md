@@ -19,6 +19,8 @@ This project built using:
 For installation on Android devices:
 [Play Store App's Page](https://play.google.com/store/apps/details?id=com.cellu)
 
-Current version: 1.0.0 Beta
+Current version: 1.0.2
+
 Minimum Requirements: 
-*Android 9.0 (Pie) or newer
+
+Android 9.0 (Pie) or newer
