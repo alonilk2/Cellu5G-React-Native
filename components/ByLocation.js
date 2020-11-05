@@ -7,7 +7,6 @@
 
 
 import React, { Component } from "react";
-import LinearGradient from 'react-native-linear-gradient';
 import {
   StyleSheet,
   ScrollView,
@@ -201,7 +200,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingBottom: '10%'
-
   },
   Header: {
     flex: 1,
@@ -226,18 +224,6 @@ const styles = StyleSheet.create({
     fontFamily: "SF-Pro-Text",
     fontSize: 15,
     color: 'rgba(255,255,255,0.3)'
-  },
-  CityInput: { 
-    marginLeft: 20,
-    marginRight: 20,
-    height:50,
-    borderColor: 'white',
-    borderWidth:1
-  },
-  firstLabel: {
-    flex: 1,
-    color: 'white'
-  },
-
+  }
 });
 export default ByLocation;

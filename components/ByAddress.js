@@ -266,15 +266,5 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
   },
-  firstLabel: {
-    flex: 1,
-    color: 'white'
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
 
 });

@@ -57,7 +57,7 @@ class Hello extends React.Component {
           <View style={styles.bg}>
           {this.renderInfoWindow()}
             <Pressable onPress={(e) => this.setState({infoWindow: true})} style={styles.infoPressable}>
-              <Image source = {require('../images/info-icon.svg')} style={ styles.info } />
+              <Image source = {require('../images/info-icon.png')} style={ styles.info } />
             </Pressable>
             <View style={{zIndex: 1}}>
               <View style={{alignSelf:'center', marginTop: 50}}>
@@ -166,18 +166,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'white'
   },
-  firstLabel: {
-    flex: 1,
-    color: 'white'
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
     paddingTop: 20,
   },
-  BtnPart: {
-    marginTop: 320
-  }
 });
 export default Hello;

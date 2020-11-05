@@ -13,9 +13,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import com.BV.LinearGradient.LinearGradientPackage;
-import org.wonday.orientation.OrientationPackage;
-import org.wonday.orientation.OrientationActivityLifecycle;
 import com.facebook.react.modules.i18nmanager.I18nUtil;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -33,7 +30,6 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
-          new LinearGradientPackage(); // <---- and This!
           return packages;
         }
 
@@ -54,7 +50,6 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-    registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
     I18nUtil sharedI18nUtilInstance = I18nUtil.getInstance();
     sharedI18nUtilInstance.allowRTL(getApplicationContext(), false);
   }

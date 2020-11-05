@@ -6,7 +6,6 @@
   */
 
 import React, { Component } from "react";
-import LinearGradient from 'react-native-linear-gradient';
 import {
   StyleSheet,
   ScrollView,
@@ -18,7 +17,6 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { WebView } from 'react-native-webview';
-import Geolocation from '@react-native-community/geolocation';
 import proj4 from 'proj4';
 import AntennaBlock from './AntennaBlock';
 import Geocode from "react-geocode";
@@ -199,17 +197,6 @@ const styles = StyleSheet.create({
     fontFamily: "SF-Pro-Text",
     fontSize: 15,
     color: 'rgba(255,255,255,0.3)'
-  },
-  CityInput: { 
-    marginLeft: 20,
-    marginRight: 20,
-    height:50,
-    borderColor: 'white',
-    borderWidth:1
-  },
-  firstLabel: {
-    flex: 1,
-    color: 'white'
-  },
+  }
 });
 export default MapByAddress;

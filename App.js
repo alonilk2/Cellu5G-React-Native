@@ -7,7 +7,6 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MapView from './components/MapView';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
 export default class App extends React.Component {
   render() {
     return (
