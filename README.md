@@ -8,13 +8,19 @@ This app is an open-sourced project, made with LOVE by me.
 For any question, bug report, request, suggestion etc.. please feel free to contact me: Alonilk2@gmail.com
 
 This project built using:
-1) React Native 0.63.3
-2) Proj4S
-3) Google Maps API
-4) Israel's GOVMAP+DATA API
-5) Node.JS
+1. React Native 0.63.3
+2. Proj4S
+3. Google Maps API
+4. Israel's GOVMAP+DATA API
+5. Node.JS
 
 
-Current version: 1.0.0 Beta
+## Installation
+For installation on Android devices:
+[Play Store App's Page](https://play.google.com/store/apps/details?id=com.cellu)
+
+Current version: 1.0.2
+
 Minimum Requirements: 
-*Android 9.0 (Pie) or newer
+
+Android 9.0 (Pie) or newer
