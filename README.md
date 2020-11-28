@@ -17,7 +17,7 @@ This project built using:
 
 ## Installation
 For installation on Android devices:
-[Play Store App's Page](https://play.google.com/store/apps/details?id=com.cellu)
+[Play Store](https://play.google.com/store/apps/details?id=com.cellu)
 
 Current version: 1.0.2
 
