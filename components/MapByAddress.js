@@ -8,7 +8,8 @@
 import React, { Component } from "react";
 import {
   StyleSheet,
-  ScrollView,
+  SafeAreaView,
+  FlatList,
   View,
   Text,
   Pressable,
@@ -91,28 +92,22 @@ class MapByAddress extends Component {
     })
 
   }
-  /**
-    * antennaList creates list of AntennaBlocks out of each antenna located near the user
-    * for displaying.
-    *
-    * @author [Alon Barenboim]
-   */
-  antennaList = () => {
-      if(this.state.retDataFromWeb.length > 0) {   
-          let list = this.state.retDataFromWeb.map((res) =>
-              <AntennaBlock key={res.Fields[1].Value} fields={res.Fields} dis={res.distance}/>
-          );
-          return (list);
-      }
-      else {
-          return (
-            <View style={{marginTop: '10%'}}>
-              <Text style={{fontFamily: "SF-Pro-Text-Bold", alignSelf: 'center', fontSize: 40}}> אופס... </Text>
-              <Text style={{alignSelf: 'center'}}> נראה שאין אנטנות קרובות באיזור... </Text>
-            </View>
-          )
-      }
-  }
+  renderFooter = () => {
+    return (
+      <View style={styles.footer}>
+        {loading ? (
+          <ActivityIndicator
+            color="orange"
+            style={{margin: 15}} />
+        ) : null}
+      </View>
+    );
+  };
+  ItemView = ({item}) => {
+    return (
+      <AntennaBlock key={item.Fields[1].Value} fields={item.Fields} dis={item.distance}/>
+    );
+  };
   handleListView = () => {
     if(this.state.isLoading) {
       console.log(this.state.isLoading);
@@ -150,17 +145,28 @@ class MapByAddress extends Component {
                 startInLoadingState={true}
                 renderLoading={
                   ()=> {
-                    return (<ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginBottom: '35%'}}/> )
+                    return (
+                      <View style={{alignItems:'center', justifyContent:'center'}}>
+                        <ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center'}}/>
+                        <Text style={{color: 'red', fontWeight: 'bold', fontSize:15, marginBottom: '25%'}}> ממתין לתשובה מgovMap</Text>
+                      </View>
+                    )
                   }
                 }
               />
               </Pressable>
             </View>
         </View>
-        <ScrollView style={styles.Body}>
+        <SafeAreaView style={styles.Body}>
           <Text style={{fontFamily: 'SF-Pro-Text-Semibold', fontSize: 20, marginLeft: 10, marginTop: 15}}>אנטנות קרובות:</Text>
-            {this.handleListView()}
-        </ScrollView>
+          <FlatList 
+            data={this.state.retDataFromWeb}
+            renderItem={this.ItemView}
+            onEndReachedThreshold={0.5}
+            keyExtractor={(item, index) => index.toString()}
+
+          />
+        </SafeAreaView>
       </View>
     );
   }
@@ -174,7 +180,7 @@ const styles = StyleSheet.create({
 
   },
   Header: {
-    flex: 1,
+    flex: 3,
     backgroundColor: '#02316e',
     padding: 10,
     paddingTop: 20,
@@ -196,7 +202,7 @@ const styles = StyleSheet.create({
   SmallText: {
     fontFamily: "SF-Pro-Text",
     fontSize: 15,
-    color: 'rgba(255,255,255,0.3)'
+    color: 'rgba(255,255,255,0.6)'
   }
 });
 export default MapByAddress;

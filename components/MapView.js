@@ -17,7 +17,7 @@ class MapView extends Component {
                 var params = {
                     LayerName: 'cell_active',
                     Point: {x: x1, y: y1},
-                    Radius:1000
+                    Radius:800
                 };
                 var win = window.ReactNativeWebView;
                 govmap.getLayerData(params).then(function(response){

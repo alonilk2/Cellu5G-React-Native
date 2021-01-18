@@ -34,7 +34,7 @@ class Hello extends React.Component {
           </Pressable>
           <Image source = {require('../images/logo.png')} style={{width: 150, height: 150, marginTop: '15%'}} />
           <Text style={styles.textInfoBold}>Cellu App</Text>
-          <Text style={styles.textInfo}>Version: 1.0.1</Text>
+          <Text style={styles.textInfo}>Version: 1.0.3</Text>
           <Text style={styles.textInfo}> 
           {`           
   המידע המוצג באפליקציה זו נאסף מתוך מאגרי המידע של 

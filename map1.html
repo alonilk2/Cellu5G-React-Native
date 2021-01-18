@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+    <script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
+    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function ()
+        {
+            govmap.createMap('map', 
+                {
+                    token: '5a4b8472-b95b-4687-8179-0ccb621c7990',
+                    layers: ["cell_active"],
+                    showXY: true,
+                    identifyOnClick: true,
+                    isEmbeddedToggle: true,
+                    background: "1",
+                    layersMode: 4,
+					bgButten: false,
+                    zoomButtons:false,
+					onLoad: function (e){
+						handleLoad()
+					}
+                });
+        });
+		var x1, y1, address;
+		function handleLoad(e) {
+			govmap.setVisibleLayers(["cell_active"]);
+		}
+   </script>
+ </head>
+ <body style="margin: 0px;">
+    <div id="map" style="width:100vw;height:100vh"></div>
+     </head>
+ <body>
