@@ -114,6 +114,36 @@ class MapByAddress extends Component {
       return (<ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginTop: '20%'}}/>)}
     else return (this.antennaList())
   }
+  renderFooter = () => {
+    return (
+      <View style={styles.footer}>
+        {this.state.loadingWV ? (
+          <ActivityIndicator
+            color="orange"
+            style={{margin: 15}} />
+        ) : 
+        (
+          <View style={styles.listsec}>
+            <Text style={{color: 'red', fontWeight: 'bold', fontSize:30, textAlign: 'center', paddingTop: '5%'}}> אופס ! </Text>
+            <Text style={{color: 'black', fontWeight: 'bold', fontSize:15}}>{
+            `
+            כפי הנראה, 
+            אין אנטנות בטווח 1 ק"מ מהמיקום שבחרתם.
+            `
+            }
+            </Text>
+            <Pressable onPress={(e) => {
+                this.fetchData();
+                WebViewRef && WebViewRef.reload();
+                this.setState({orientation: 1})
+              }} style={styles.BtnStyle}>
+              <Text style={styles.txtBtn}>רענון</Text>
+            </Pressable>
+          </View>
+        )}
+      </View>
+    );
+  };
   render() {
     let jsCode = `x1=`+this.state.position[0]+`; y1=`+this.state.position[1]+`;
                   govmap.zoomToXY({ x:`+this.state.position[0]+`, y: `+this.state.position[1]+`, level:7, marker: true });
@@ -159,12 +189,13 @@ class MapByAddress extends Component {
         </View>
         <SafeAreaView style={styles.Body}>
           <Text style={{fontFamily: 'SF-Pro-Text-Semibold', fontSize: 20, marginLeft: 10, marginTop: 15}}>אנטנות קרובות:</Text>
+
           <FlatList 
             data={this.state.retDataFromWeb}
             renderItem={this.ItemView}
             onEndReachedThreshold={0.5}
             keyExtractor={(item, index) => index.toString()}
-
+            ListEmptyComponent={this.renderFooter}
           />
         </SafeAreaView>
       </View>
@@ -178,6 +209,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingBottom: '10%'
 
+  },
+  BtnStyle: { 
+    borderRadius: 50,
+    borderColor:  '#ff6600',
+    borderWidth: 2,
+    color: 'black',
+    backgroundColor: 'transparent',
+    width: '47%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+    txtBtn: {
+    fontFamily: "SF-Pro-Text-Bold",
+    fontSize: 20,
+    color: '#ff6600'
   },
   Header: {
     flex: 3,

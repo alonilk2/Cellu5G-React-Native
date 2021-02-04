@@ -11,17 +11,28 @@ import {
   StatusBar,
   View,
   Text,
+    Modal,
   Image,
   ImageBackground,
   Pressable,
 } from 'react-native';
+import NativeAdView, {
+  CallToActionView,
+  IconView,
+  HeadlineView,
+  TaglineView,
+  AdvertiserView,
+  AdBadge,
+} from "react-native-admob-native-ads";
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
+
 
 class Hello extends React.Component {
   constructor () {
     super()
     this.state = {
-      infoWindow: false
+      infoWindow: false,
+      modalDatavisible: true
     }
     changeNavigationBarColor('transparent', false);
   }
@@ -34,7 +45,7 @@ class Hello extends React.Component {
           </Pressable>
           <Image source = {require('../images/logo.png')} style={{width: 150, height: 150, marginTop: '15%'}} />
           <Text style={styles.textInfoBold}>Cellu App</Text>
-          <Text style={styles.textInfo}>Version: 1.0.3</Text>
+          <Text style={styles.textInfo}>Version: 1.1</Text>
           <Text style={styles.textInfo}> 
           {`           
   המידע המוצג באפליקציה זו נאסף מתוך מאגרי המידע של 
@@ -73,6 +84,78 @@ class Hello extends React.Component {
                 </Pressable>
               </View>
             </View>
+          <NativeAdView
+              style={{
+                width: "95%",
+                alignSelf: "center",
+                height: 100,
+              }}
+              adUnitID="ca-app-pub-6408045617472378/5560260317"
+            >
+              <View
+                style={{
+                  height: 100,
+                  width: "100%",
+                }}
+              >
+                <AdBadge />
+                <View
+                  style={{
+                    height: 100,
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
+                >
+                  <IconView
+                    style={{
+                      width: 60,
+                      height: 60,
+                    }}
+                  />
+                  <View
+                    style={{
+                      width: "65%",
+                      maxWidth: "65%",
+                      paddingHorizontal: 6,
+                    }}
+                  >
+                    <HeadlineView
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 13,
+                      }}
+                    />
+                    <TaglineView
+                      numberOfLines={1}
+                      style={{
+                        fontSize: 11,
+                      }}
+                    />
+                    <AdvertiserView
+                      style={{
+                        fontSize: 10,
+                        color: "gray",
+                      }}
+                    />
+                  </View>
+
+                  <CallToActionView
+                    style={{
+                      height: 45,
+                      paddingHorizontal: 12,
+                      backgroundColor: "purple",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 5,
+                      elevation: 10,
+                    }}
+                    textStyle={{ color: "white", fontSize: 14 }}
+                  />
+                </View>
+              </View>
+            </NativeAdView>
           </View>
         </ImageBackground>
       </View>
@@ -102,6 +185,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "center",
     backgroundColor:'rgba(0,20,100,0.7)',
+    paddingTop: '15%'
   },
   bg1: {
     flex: 1,

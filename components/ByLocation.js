@@ -21,11 +21,11 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { WebView } from 'react-native-webview';
-import Geolocation from '@react-native-community/geolocation';
 import proj4 from 'proj4';
 import AntennaBlock from './AntennaBlock';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
-
+import Geolocation from 'react-native-geolocation-service';
+var WebViewRef = '';
 class ByLocation extends Component {
   constructor () {
     super()
@@ -35,7 +35,8 @@ class ByLocation extends Component {
       position: [],
       retDataFromWeb: [],
       orientation: '',
-      isLoading: true
+      isLoading: true,
+      loadingWV: true
     }
     changeNavigationBarColor('transparent', true);
     this.fetchData();
@@ -72,7 +73,7 @@ class ByLocation extends Component {
       (error) => {
         console.log(error.code, error.message);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 })
+      { enableHighAccuracy: false, timeout: 25000, maximumAge: 20000 })
     }).catch((Err)=>{
       console.log("me"+Err);
     });
@@ -120,11 +121,37 @@ class ByLocation extends Component {
   renderFooter = () => {
     return (
       <View style={styles.footer}>
-        {loading ? (
+        {this.state.loadingWV ? (
           <ActivityIndicator
             color="orange"
             style={{margin: 15}} />
-        ) : null}
+        ) : 
+        (
+          <View style={styles.listsec}>
+            <Text style={{color: 'red', fontWeight: 'bold', fontSize:30, textAlign: 'center', paddingTop: '2%'}}> אופס ! </Text>
+            <Text style={{color: 'black', fontWeight: 'bold', fontSize:15}}>{
+            `
+            או שאין אנטנות בטווח 1.5 ק"מ ממיקומכם,
+            או שלא הצלחנו למצוא את מיקומכם הנוכחי.
+            אם אתם בטוחים שאתם בכדור הארץ,
+            אנא וודאו כי:
+
+                  א) ה-GPS במכשירכם דלוק
+                  ב) הינכם נמצאים במקום פתוח, ללא גג
+            
+            לאחר מכן ניתן לרענן את העמוד:
+            `
+            }
+            </Text>
+            <Pressable onPress={(e) => {
+                this.fetchData();
+                WebViewRef && WebViewRef.reload();
+                this.setState({orientation: 1})
+              }} style={styles.BtnStyle}>
+              <Text style={styles.txtBtn}>רענון</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
     );
   };
@@ -135,28 +162,14 @@ class ByLocation extends Component {
   };
   render() {
     console.log("pos: "+this.state.position);
-    if(this.state.position.length === 0){
-      return (
-        <View style={styles.MainContainer}>
-          <View style={styles.Header}>
-            <Text style={styles.Paragraph}>חיפוש לפי מיקום</Text>
-              <View style={{flex: 1, borderRadius: 30, overflow: 'hidden', marginTop: 20 }}>
-              </View>
-          </View>
-          <ScrollView style={styles.Body}>
-            <Text style={{fontFamily: 'SF-Pro-Text-Semibold', fontSize: 20, marginLeft: 10, marginTop: 15}}>אנטנות קרובות:</Text>
-            <ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginTop: '20%'}}/> 
-          </ScrollView>
-        </View>
-      )
-    }
+
     let jsCode = `x1=`+this.state.position[0]+`; y1=`+this.state.position[1]+`;
                   govmap.zoomToXY({ x:`+this.state.position[0]+`, y: `+this.state.position[1]+`, level:7, marker: true });
                   var res = "";
                   var params = {
                       LayerName: 'cell_active',
                       Point: {x: x1, y: y1},
-                      Radius:1000
+                      Radius:1500
                   };
                   var win = window.ReactNativeWebView;
                   govmap.getLayerData(params).then(function(response){
@@ -171,6 +184,7 @@ class ByLocation extends Component {
             <View style={{flex: 1, borderRadius: 30, overflow: 'hidden', marginTop: 20 }}>
               <Pressable onPress={()=> {this.props.navigation.navigate('MapView', {position: this.state.position})}} style={{flex:1}}>
                 <WebView style={{flex:1}}
+                  ref={WEBVIEW_REF => (WebViewRef = WEBVIEW_REF)}
                   source={{
                   uri: 'http://165.227.137.116/map1.html',
                   }}
@@ -178,12 +192,13 @@ class ByLocation extends Component {
                   javaScriptEnabledAndroid={true}
                   onMessage={(event)=> this.handleMessage(event) }
                   startInLoadingState={true}
+                  onLoadEnd={(event)=> this.setState({loadingWV: false})}
                   renderLoading={
                     ()=> {
                       return(
                       <View style={{alignItems:'center', justifyContent:'center'}}>
                         <ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center'}}/>
-                        <Text style={{color: 'red', fontWeight: 'bold', fontSize:15, marginBottom: '25%'}}> ממתין לקליטת GPS</Text>
+                        <Text style={{color: 'red', fontWeight: 'bold', fontSize:15, marginBottom: '25%'}}> ממתין לתשובה מGovmap </Text>
                       </View>
                      )
                     }
@@ -198,6 +213,7 @@ class ByLocation extends Component {
             renderItem={this.ItemView}
             keyExtractor={(item, index) => index.toString()}
             onEndReachedThreshold={0.5}
+            ListEmptyComponent={this.renderFooter}
           />
         </SafeAreaView>
 
@@ -211,6 +227,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingBottom: '10%'
+  },
+  BtnStyle: { 
+    borderRadius: 50,
+    borderColor:  '#ff6600',
+    borderWidth: 2,
+    color: 'black',
+    backgroundColor: 'transparent',
+    width: '47%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   Header: {
     flex: 3,
@@ -230,6 +258,11 @@ const styles = StyleSheet.create({
     fontFamily: "SF-Pro-Text-Bold",
     fontSize: 30,
     color: 'white'
+  },
+  txtBtn: {
+    fontFamily: "SF-Pro-Text-Bold",
+    fontSize: 20,
+    color: '#ff6600'
   },
   SmallText: {
     fontFamily: "SF-Pro-Text",
