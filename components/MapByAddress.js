@@ -128,7 +128,7 @@ class MapByAddress extends Component {
             <Text style={{color: 'black', fontWeight: 'bold', fontSize:15}}>{
             `
             כפי הנראה, 
-            אין אנטנות בטווח 1 ק"מ מהמיקום שבחרתם.
+            אין אנטנות בטווח 1.5 ק"מ מהמיקום שבחרתם.
             `
             }
             </Text>
@@ -151,7 +151,7 @@ class MapByAddress extends Component {
                   var params = {
                       LayerName: 'cell_active',
                       Point: {x: x1, y: y1},
-                      Radius:1000
+                      Radius:1500
                   };
                   var win = window.ReactNativeWebView;
                   govmap.getLayerData(params).then(function(response){

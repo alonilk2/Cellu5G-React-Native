@@ -10,6 +10,8 @@ import React, {Component} from 'react';
 import {View, Image, StyleSheet, ImageBackground, TouchableOpacity, Text, TextInput} from 'react-native';
 import axios from 'axios';
 import Autocomplete from 'react-native-autocomplete-input';
+import { InterstitialAd, AdEventType, TestIds } from '@react-native-firebase/admob';
+
 export class ByAddress extends Component {
     constructor(props) {
         super(props);
@@ -112,7 +114,9 @@ export class ByAddress extends Component {
       );
     }
 }
-
+const interstitial = InterstitialAd.createForAdRequest('ca-app-pub-6408045617472378/7907523375', {
+  requestNonPersonalizedAdsOnly: true
+});
 export class StreetList extends Component {
   constructor(props){
     super(props);
@@ -121,8 +125,19 @@ export class StreetList extends Component {
       streetsObj: '',
       lastResultStr: '',
       strQuery: '',
-      cityName: props.route.params.item
+      cityName: props.route.params.item,
+      loaded: false
     }
+    const eventListener = interstitial.onAdEvent(type => {
+      if (type === AdEventType.LOADED) {
+        this.setState({loaded: true});
+      }
+      if (type === AdEventType.CLOSED) {
+        this.setState({loaded: false});       
+        interstitial.load();
+      }
+    });
+    interstitial.load();
     this.handleCityClick(this.props.route.params.item)
   }
   async handleCityClick(name) {
@@ -179,7 +194,11 @@ export class StreetList extends Component {
                     </View>
                   )}
                   renderItem={({ item, i }) => (
-                    <TouchableOpacity key={item} onPress={() => {this.setState({ strQuery: item }); this.props.navigation.navigate('MapByAddress', {street: item, city: this.state.cityName})}}>
+                    <TouchableOpacity key={item} onPress={() => {
+                      this.setState({ strQuery: item }); 
+                      if(this.state.loaded) {interstitial.show()};
+                      this.props.navigation.navigate('MapByAddress', {street: item, city: this.state.cityName})
+                      }}>
                       <Text style={styles.itemText}>{item}</Text>
                     </TouchableOpacity>
                   )}

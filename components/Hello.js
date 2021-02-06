@@ -25,16 +25,30 @@ import NativeAdView, {
   AdBadge,
 } from "react-native-admob-native-ads";
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import { InterstitialAd, AdEventType, TestIds } from '@react-native-firebase/admob';
 
-
+const interstitial = InterstitialAd.createForAdRequest('ca-app-pub-6408045617472378/7907523375', {
+  requestNonPersonalizedAdsOnly: true
+});
 class Hello extends React.Component {
   constructor () {
     super()
     this.state = {
       infoWindow: false,
-      modalDatavisible: true
+      modalDatavisible: true,
+      loaded: false
     }
     changeNavigationBarColor('transparent', false);
+    const eventListener = interstitial.onAdEvent(type => {
+      if (type === AdEventType.LOADED) {
+        this.setState({loaded: true});
+      }
+      if (type === AdEventType.CLOSED) {
+        this.setState({loaded: false});       
+        interstitial.load();
+      }
+    });
+    interstitial.load();
   }
   renderInfoWindow = () => {
     if(this.state.infoWindow === true) return (
@@ -45,7 +59,7 @@ class Hello extends React.Component {
           </Pressable>
           <Image source = {require('../images/logo.png')} style={{width: 150, height: 150, marginTop: '15%'}} />
           <Text style={styles.textInfoBold}>Cellu App</Text>
-          <Text style={styles.textInfo}>Version: 1.1</Text>
+          <Text style={styles.textInfo}>Version: 1.1.1</Text>
           <Text style={styles.textInfo}> 
           {`           
   המידע המוצג באפליקציה זו נאסף מתוך מאגרי המידע של 
@@ -76,7 +90,10 @@ class Hello extends React.Component {
               </View>
               <Text style={{alignSelf: 'center', color: 'white', fontFamily: "SF-Pro-Text-Bold"}}>חפש אנטנות לפי...</Text>
               <View style={{flexDirection: 'row'}}>
-                <Pressable onPress={(e) => this.props.navigation.navigate('Location')} style={styles.BtnStyle}>
+                <Pressable onPress={(e) =>{
+                  if(this.state.loaded) {interstitial.show()};
+                  this.props.navigation.navigate('Location');
+                  }} style={styles.BtnStyle}>
                   <Text style={styles.txtBtn}>מיקום נוכחי</Text>
                 </Pressable>
                 <Pressable onPress={(e) => this.props.navigation.navigate('ByAddress')} style={styles.BtnStyleAddr}>
@@ -90,7 +107,7 @@ class Hello extends React.Component {
                 alignSelf: "center",
                 height: 100,
               }}
-              adUnitID="ca-app-pub-6408045617472378/5560260317"
+              adUnitID="ca-app-pub-6408045617472378/2263302691"
             >
               <View
                 style={{

@@ -1,6 +1,6 @@
 {
   "name": "Cellu",
-  "version": "1.1",
+  "version": "1.1.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -13,6 +13,8 @@
     "@fortawesome/react-native-fontawesome": "^0.2.6",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-firebase/admob": "^10.6.3",
+    "@react-native-firebase/app": "^10.6.3",
     "@react-navigation/native": "^5.7.6",
     "@react-navigation/stack": "^5.9.3",
     "axios": "^0.20.0",
