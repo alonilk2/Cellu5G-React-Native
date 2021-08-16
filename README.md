@@ -8,7 +8,7 @@ This app is an open-source project, made with LOVE by me.
 For any question, bug report, request, suggestion etc.., please feel free to contact me: Alonilk2@gmail.com
 
 This project was built using:
-1. React Native 0.63.3
+1. React Native 0.64
 2. Proj4S
 3. Google Maps API
 4. Israel's GOVMAP + DATA API
