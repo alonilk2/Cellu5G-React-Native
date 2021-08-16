@@ -10,19 +10,22 @@ import React, {Component} from 'react';
 import {View, Image, StyleSheet, ImageBackground, TouchableOpacity, Text, TextInput} from 'react-native';
 import axios from 'axios';
 import Autocomplete from 'react-native-autocomplete-input';
-import { InterstitialAd, AdEventType, TestIds } from '@react-native-firebase/admob';
+
+import Global from './Global.js'
 
 export class ByAddress extends Component {
     constructor(props) {
         super(props);
         this.state = {
             citiesObj: [],
-            query:'',
+            query:'שם הישוב',
             lastResult: '',
             counter: 0,
             cityFlag: false         //cityFlag is true if and only if the city was chosen from the recommendation list.
         }
+
     }
+
     async componentDidMount() {
         //Get list of cities in Israel from data.gov.il API
         do {
@@ -48,7 +51,7 @@ export class ByAddress extends Component {
       var city;
       for(city of this.state.citiesObj){
         let name = city.שם_ישוב;
-        if(stringStartsWith(name, str) && city.שם_ישוב){
+        if(isStringStartsWithSubString(name, str) && city.שם_ישוב){
           citiesNamesArr.push(city.שם_ישוב)
         }
       }
@@ -93,11 +96,12 @@ export class ByAddress extends Component {
                   containerStyle={{zIndex:1}}
                   renderTextInput={()=> (
                     <View style={{flex:1, justifyContent:'center'}}>
-                      <Text style={styles.FormTitle}> הכנס שם עיר </Text>
+                      <Text style={styles.FormTitle}> הכנס את שם הישוב </Text>
                       <TextInput
                         style={styles.TextInputStyle}
                         onChangeText={text => {this.setState({ query: text, cityFlag: false });}}
                         value={this.state.query}
+                        onFocus= {() => {if(this.state.query === "שם הישוב") this.setState({query : ''})}}
                       />
                     </View>
                   )}
@@ -114,9 +118,7 @@ export class ByAddress extends Component {
       );
     }
 }
-const interstitial = InterstitialAd.createForAdRequest('ca-app-pub-6408045617472378/7907523375', {
-  requestNonPersonalizedAdsOnly: true
-});
+
 export class StreetList extends Component {
   constructor(props){
     super(props);
@@ -124,22 +126,21 @@ export class StreetList extends Component {
       counterStr:0,
       streetsObj: '',
       lastResultStr: '',
-      strQuery: '',
+      strQuery: 'שם הרחוב',
       cityName: props.route.params.item,
-      loaded: false
+      loaded: false,
     }
-    const eventListener = interstitial.onAdEvent(type => {
-      if (type === AdEventType.LOADED) {
-        this.setState({loaded: true});
-      }
-      if (type === AdEventType.CLOSED) {
-        this.setState({loaded: false});       
-        interstitial.load();
-      }
-    });
-    interstitial.load();
     this.handleCityClick(this.props.route.params.item)
+    //this.renderInterstitialAd();
   }
+  /*renderInterstitialAd = async () => {
+    await AdMobInterstitial.setAdUnitID('ca-app-pub-6408045617472378/7907523375'); // Test ID, Replace with your-admob-unit-id
+    await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: true});
+  }
+  showInterstitialAd = async () => {
+    const res = await AdMobInterstitial.getIsReadyAsync()
+    if(res) await AdMobInterstitial.showAdAsync();
+  }*/
   async handleCityClick(name) {
       //Get list of streets in Israel from data.gov.il API
       do {
@@ -163,7 +164,7 @@ export class StreetList extends Component {
     var streetsNamesArr = [];
     var street;
     for(street of this.state.streetsObj){
-      if(stringStartsWith(street.שם_רחוב, str) && street.שם_רחוב){
+      if(isStringStartsWithSubString(street.שם_רחוב, str) && street.שם_רחוב){
         streetsNamesArr.push(street.שם_רחוב)
       }
     }
@@ -185,18 +186,19 @@ export class StreetList extends Component {
                   containerStyle={{zIndex:1}}
                   renderTextInput={()=> (
                     <View style={{flex:1, justifyContent:'center'}}>
-                      <Text style={styles.FormTitle}> הכנס שם רחוב </Text>
+                      <Text style={styles.FormTitle}> הכנס את שם הרחוב </Text>
                       <TextInput
                         style={styles.TextInputStyle}
                         onChangeText={text => this.setState({ strQuery: text})}
-                        value={this.state.query}
+                        value={this.state.strQuery}
+                        onFocus= {() => {if(this.state.strQuery === "שם הרחוב") this.setState({strQuery : ''})}}
                       />
                     </View>
                   )}
                   renderItem={({ item, i }) => (
                     <TouchableOpacity key={item} onPress={() => {
                       this.setState({ strQuery: item }); 
-                      if(this.state.loaded) {interstitial.show()};
+                     // this.showInterstitialAd()
                       this.props.navigation.navigate('MapByAddress', {street: item, city: this.state.cityName})
                       }}>
                       <Text style={styles.itemText}>{item}</Text>
@@ -211,14 +213,13 @@ export class StreetList extends Component {
   }
 }
 
-function stringStartsWith(checkedString, startString) {
+function isStringStartsWithSubString(checkedString, startString) {
   if(checkedString === '' || startString === '') return;
   var x;
   for(x=0; x<startString.length; x++){
     if(startString.charAt(x) !== checkedString.charAt(x)){
       return false;
     }
-
   }
   return true;
 }
@@ -247,10 +248,12 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   FormTitle: {
-    fontFamily: "SF-Pro-Text-Regular",
-    fontSize: 20,
+    fontFamily: "SF-Pro-Text-Bold",
+    fontSize: 23,
     color: '#ffffff',
-    alignSelf: 'center'
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    marginBottom: 5
   },
   ListContainer: {
     flex:5,

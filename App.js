@@ -7,9 +7,12 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MapView from './components/MapView';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 export default class App extends React.Component {
   render() {
     return (
+      <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -23,6 +26,7 @@ export default class App extends React.Component {
           <Stack.Screen name="MapByAddress" component={MapByAddress} />
         </Stack.Navigator>
       </NavigationContainer>
+      </SafeAreaProvider>
     )
   }
 }

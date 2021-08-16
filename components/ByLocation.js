@@ -10,21 +10,27 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   FlatList,
-  ScrollView,
   View,
   Text,
   Pressable,
   StatusBar,
+  ScrollView,
   SafeAreaView,
   Image,
   PermissionsAndroid,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
+import FontAwesome from "react-native-vector-icons/Ionicons";
 import { WebView } from 'react-native-webview';
 import proj4 from 'proj4';
 import AntennaBlock from './AntennaBlock';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Geolocation from 'react-native-geolocation-service';
+import Footer from './Footer';
+import Settings from './Settings';
+import Global from './Global.js';
+import Animation from './Animation';
+
 var WebViewRef = '';
 class ByLocation extends Component {
   constructor () {
@@ -36,7 +42,10 @@ class ByLocation extends Component {
       retDataFromWeb: [],
       orientation: '',
       isLoading: true,
-      loadingWV: true
+      loadingWV: true,
+      settingsWindow: false,
+      antennaDescription: false,
+      chosenAntenna: []
     }
     changeNavigationBarColor('transparent', true);
     this.fetchData();
@@ -73,11 +82,23 @@ class ByLocation extends Component {
       (error) => {
         console.log(error.code, error.message);
       },
-      { enableHighAccuracy: false, timeout: 25000, maximumAge: 20000 })
+      { enableHighAccuracy: true, timeout: 25000, maximumAge: 20000 })
     }).catch((Err)=>{
       console.log("me"+Err);
     });
   }
+
+  filterAntenna = (tech) => { 
+    let parsed = tech.split(" ");
+    let answer = [0,0,0];
+    for(var i = 0; i < parsed.length; i++){
+      if(parsed[i] == "3") answer[0]=1;
+      if(parsed[i] == "4") answer[1]=1;
+      if(parsed[i] == "5") answer[2]=1;
+    }
+    return answer;
+  }
+
   /**
     * handleMessage gets an event from WebView and handles the event.
     * It gets a nativeEvent contains list of antennas, sorts and saves it in retDataFromWeb state.
@@ -87,30 +108,34 @@ class ByLocation extends Component {
    */
   handleMessage = (e) => {
     let data = JSON.parse(e.nativeEvent.data);
-    let x=0, y=0;
+    let x, y, mindisttemp, tempentry, counter;
     let sortedList = [];
     return new Promise((resolve, reject) => {
       if(data) {
-          if(data.length > 0) {
-              for(x = 0; x < data.length-1; x++){
-                  let min = parseInt(data[x].distance);
-                  sortedList[x] = data[x];
-                  for(y = x+1; y < data.length; y++) {
-                    if(parseInt(data[y].distance) < min){
-                        min = parseInt(data[y].distance);
-                        let temp = sortedList[x];
-                        sortedList[x] = data[y];
-                        data[y] = temp;
-                    }
-                  }
-              }
-              
-          } else console.log("data error");
+        for(x = 0; x < data.length-1; x++){
+          mindisttemp = x
+          for(y = x+1; y < data.length; y++)
+            if(parseInt(data[y].distance) < parseInt(data[mindisttemp].distance))
+              mindisttemp = y;
+          tempentry = data[x]
+          data[x] = data[mindisttemp]
+          data[mindisttemp] = tempentry
+        }
       }
-      else {resolve(this.state.isLodaing = false)}
+      else {this.setState({isLoading:false}); reject('no data')}
+      counter = 0;
+      for(x = 0; x < data.length; x++){
+        let techarray = this.filterAntenna(data[x].Fields[18].Value);
+        if((Global.g5Toggle && techarray[2])
+          || (Global.g4Toggle && techarray[1])
+          || (Global.g3Toggle && techarray[0])
+          || (Global.g4Toggle && Global.g3Toggle && Global.g5Toggle)){
+            sortedList[counter] = data[x];
+            counter++;
+          }
+      }
       resolve(this.setState({retDataFromWeb: sortedList, isLoading: false}));
-      reject('error');
-    })
+    }).catch(e => console.error(e))
   }
   /**
     * antennaList creates list of AntennaBlocks out of each antenna located near the user
@@ -118,105 +143,153 @@ class ByLocation extends Component {
     *
     * @author [Alon Barenboim]
    */
-  renderFooter = () => {
-    return (
-      <View style={styles.footer}>
-        {this.state.loadingWV ? (
-          <ActivityIndicator
-            color="orange"
-            style={{margin: 15}} />
-        ) : 
-        (
-          <View style={styles.listsec}>
-            <Text style={{color: 'red', fontWeight: 'bold', fontSize:30, textAlign: 'center', paddingTop: '2%'}}> אופס ! </Text>
-            <Text style={{color: 'black', fontWeight: 'bold', fontSize:15}}>{
-            `
-            או שאין אנטנות בטווח 1.5 ק"מ ממיקומכם,
-            או שלא הצלחנו למצוא את מיקומכם הנוכחי.
-            אם אתם בטוחים שאתם בכדור הארץ,
-            אנא וודאו כי:
 
-                  א) ה-GPS במכשירכם דלוק
-                  ב) הינכם נמצאים במקום פתוח, ללא גג
-            
-            לאחר מכן ניתן לרענן את העמוד:
-            `
-            }
-            </Text>
-            <Pressable onPress={(e) => {
-                this.fetchData();
-                WebViewRef && WebViewRef.reload();
-                this.setState({orientation: 1})
-              }} style={styles.BtnStyle}>
-              <Text style={styles.txtBtn}>רענון</Text>
-            </Pressable>
-          </View>
-        )}
+  reRenderPage = () => {
+    this.fetchData();
+    WebViewRef && WebViewRef.reload();
+    this.setState({orientation: 1, retDataFromWeb: '', isLoading: true});
+  }
+  ItemView = ({item}) => {
+    return (
+      <View>
+        <Pressable onPress={()=> {
+            this.setState({antennaDescription: true, chosenAntenna: item.Fields});
+          }}>
+          <AntennaBlock key={item.Fields[1].Value} fields={item.Fields} dis={item.distance}/>
+          <View style={styles.bottomBorder}></View>
+        </Pressable>
       </View>
     );
   };
-  ItemView = ({item}) => {
-    return (
-      <AntennaBlock key={item.Fields[1].Value} fields={item.Fields} dis={item.distance}/>
-    );
-  };
-  render() {
-    console.log("pos: "+this.state.position);
+  renderBody = () => {
+    if(Global.settingsWindow) return ( <Settings reRenderPage={this.reRenderPage} page={this}/>)
+    else return (
+      <SafeAreaView style={styles.Body}>
+        <FlatList 
+          data={this.state.retDataFromWeb}
+          renderItem={this.ItemView}
+          keyExtractor={(item, index) => index.toString()}
+          onEndReachedThreshold={0.5}
+          ListEmptyComponent={()=>(<Footer loadingWV={this.state.loadingWV} isLoading={this.state.isLoading} type="gps" reRenderPage={this.reRenderPage} />)}
+        />
+      </SafeAreaView>
+    )
+  }
+  renderAntennaDescriptionWindow = () => {
+    if(this.state.antennaDescription === true) {
+      let antenna = this.state.chosenAntenna;
+      let broadcastTech = antenna[18].Value;
+      let three, four, five;
+      broadcastTech = broadcastTech.split(" ");
+      for(var i = 0; i < broadcastTech.length; i++){
+        if(broadcastTech[i] == "3") three=1;
+        if(broadcastTech[i] == "4") four=1;
+        if(broadcastTech[i] == "5") five=1;
+      }
+      return (
+      <Animation style={{flex: 1, height: '100%', width: '100%',position:'absolute', zIndex: 5, elevation: 30}} page={this}>
+        <ScrollView style={styles.infoContainer}>
+          <Pressable onPress={(e)=>this.setState({antennaDescription: false})}>
+            <FontAwesome
+                name={"arrow-back-outline"}
+                size={30}
+            />
+          </Pressable>
+          <View style={{alignItems:'center'}}>
 
+            <Image source = {require('../images/logo.png')} style={{width: 100, height: 100, marginTop: '3%'}} />
+            <View style={styles.techContainer}>
+              {three==1 ? <Text style={styles.techtxtOn}> 3G </Text> : <Text style={styles.techtxtOff}> 3G </Text>}
+              {four==1 ? <Text style={styles.techtxtOn}> 4G </Text> : <Text style={styles.techtxtOff}> 4G </Text>}
+              {five==1 ? <Text style={styles.techtxtOn}> 5G </Text> : <Text style={styles.techtxtOff}> 5G </Text>}
+            </View>
+            <Text style={styles.textInfo}> 
+              {antenna[0].FieldName}: {antenna[0].Value}{"\n"}
+              {antenna[1].FieldName}: {antenna[1].Value}{"\n"}
+              {antenna[2].FieldName}: {antenna[2].Value}{"\n"}
+              {antenna[3].FieldName}: {antenna[3].Value}{"\n"}
+              {antenna[4].FieldName}: {antenna[4].Value}{"\n"}
+              {antenna[5].FieldName}: {antenna[5].Value}{"\n"}
+              {antenna[6].FieldName}: {antenna[6].Value}{"\n"}
+              {antenna[7].FieldName}: {antenna[7].Value}{"\n"}
+              {antenna[8].FieldName}: {antenna[8].Value}{"\n"}
+              {antenna[9].FieldName}: {antenna[9].Value}{"\n"}
+              {antenna[10].FieldName}: {antenna[10].Value}{"\n"}
+              {antenna[11].FieldName}: {antenna[11].Value}{"\n"}
+              {antenna[15].FieldName}: {antenna[15].Value}{"\n"}
+              {antenna[16].FieldName}: {antenna[16].Value}{"\n"}
+              {antenna[17].FieldName}: {antenna[17].Value}{"\n"}
+
+            </Text>
+          </View>
+        </ScrollView>
+      </Animation>
+      )
+    }
+  }
+  render() {
     let jsCode = `x1=`+this.state.position[0]+`; y1=`+this.state.position[1]+`;
-                  govmap.zoomToXY({ x:`+this.state.position[0]+`, y: `+this.state.position[1]+`, level:7, marker: true });
-                  var res = "";
                   var params = {
                       LayerName: 'cell_active',
                       Point: {x: x1, y: y1},
-                      Radius:1500
+                      Radius:`+Global.radius+`
                   };
                   var win = window.ReactNativeWebView;
                   govmap.getLayerData(params).then(function(response){
                       win.postMessage(JSON.stringify(response.data));
                   });  
+                  govmap.zoomToXY({ x:`+this.state.position[0]+`, y: `+this.state.position[1]+`, level:5, marker:false });
+                  var res = "";
                   `
     return (
       <View style={styles.MainContainer}>
+        {this.renderAntennaDescriptionWindow()}
         <View style={styles.Header}>
-          <Text style={styles.Paragraph}>חיפוש לפי מיקום</Text>
-          <Text style={styles.SmallText}>לחץ על המפה להגדלה</Text>
-            <View style={{flex: 1, borderRadius: 30, overflow: 'hidden', marginTop: 20 }}>
-              <Pressable onPress={()=> {this.props.navigation.navigate('MapView', {position: this.state.position})}} style={{flex:1}}>
-                <WebView style={{flex:1}}
-                  ref={WEBVIEW_REF => (WebViewRef = WEBVIEW_REF)}
-                  source={{
-                  uri: 'http://165.227.137.116/map1.html',
-                  }}
-                  injectedJavaScript={jsCode}
-                  javaScriptEnabledAndroid={true}
-                  onMessage={(event)=> this.handleMessage(event) }
-                  startInLoadingState={true}
-                  onLoadEnd={(event)=> this.setState({loadingWV: false})}
-                  renderLoading={
-                    ()=> {
-                      return(
-                      <View style={{alignItems:'center', justifyContent:'center'}}>
-                        <ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center'}}/>
-                        <Text style={{color: 'red', fontWeight: 'bold', fontSize:15, marginBottom: '25%'}}> ממתין לתשובה מGovmap </Text>
-                      </View>
-                     )
-                    }
-                  }
+          <View style={{flex: 2, flexDirection: 'row', marginBottom: '6%'}}>
+            <View style={{flex: 2, marginLeft: 10, marginTop: 15 }}>
+              <Pressable onPress={()=> {
+                  Global.settingsWindow = true;
+                  this.setState({settingsWindow: true})
+                }} style={{flex:1}}>
+                <FontAwesome
+                    name={"settings-outline"}
+                    size={40}
+                    color="#ffffff"
                 />
               </Pressable>
             </View>
+            <View style={{flex: 8}}>
+              <Text style={styles.Paragraph}>חיפוש לפי מיקום</Text>
+              <Text style={styles.SmallText}>לחץ על המפה להגדלה</Text>
+            </View>
+          </View>
+          <View style={{flex: 10, borderRadius: 30, overflow: 'hidden', marginTop: 20 }}>
+            <Pressable onPress={()=> {this.props.navigation.navigate('MapView', {position: this.state.position})}} style={{flex:1}}>
+              <WebView style={{flex:1}}
+                ref={WEBVIEW_REF => (WebViewRef = WEBVIEW_REF)}
+                source={{
+                uri: 'http://165.227.137.116/map1.html',
+                }}
+                injectedJavaScript={jsCode}
+                javaScriptEnabledAndroid={true}
+                onMessage={(event)=> this.handleMessage(event) }
+                startInLoadingState={true}
+                onLoadEnd={(event)=> this.setState({loadingWV: false})}
+                renderLoading={
+                  ()=> {
+                    return(
+                    <View style={{alignItems:'center', justifyContent:'center'}}>
+                      <ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center'}}/>
+                      <Text style={{color: 'red', fontWeight: 'bold', fontSize:15, marginBottom: '25%'}}> ממתין לתשובה מGovmap </Text>
+                    </View>
+                    )
+                  }
+                }
+              />
+            </Pressable>
+          </View>
         </View>
-        <SafeAreaView style={styles.Body}>
-          <FlatList 
-            data={this.state.retDataFromWeb}
-            renderItem={this.ItemView}
-            keyExtractor={(item, index) => index.toString()}
-            onEndReachedThreshold={0.5}
-            ListEmptyComponent={this.renderFooter}
-          />
-        </SafeAreaView>
-
+      {this.renderBody()}
       </View>
     );
   }
@@ -226,19 +299,23 @@ const styles = StyleSheet.create({
   MainContainer: {
     flex: 1,
     backgroundColor: 'white',
-    paddingBottom: '10%'
   },
-  BtnStyle: { 
-    borderRadius: 50,
-    borderColor:  '#ff6600',
-    borderWidth: 2,
-    color: 'black',
-    backgroundColor: 'transparent',
-    width: '47%',
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+  infoContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,1)',
+    marginTop: '10%',
+    marginBottom: '10%',
+    padding: 20,
+    borderRadius: 20,
+    marginRight: '5%',
+    marginLeft: '5%',
+    elevation: 15,
+    overflow: 'hidden',
+  },
+  bottomBorder: {
+    marginTop: 4,
+    borderBottomWidth: 1,
+    borderColor: '#e6e6e6',
   },
   Header: {
     flex: 3,
@@ -249,7 +326,7 @@ const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOpacity: 1,
     elevation: 20,
-    paddingTop: '12%'
+    paddingTop: '8%'
   },
   Body: {
     flex: 3,
@@ -259,15 +336,42 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: 'white'
   },
-  txtBtn: {
-    fontFamily: "SF-Pro-Text-Bold",
-    fontSize: 20,
-    color: '#ff6600'
-  },
   SmallText: {
-    fontFamily: "SF-Pro-Text",
+    fontFamily: "SF-Pro-Text-Regular",
     fontSize: 15,
     color: 'rgba(255,255,255,0.6)'
-  }
+  },
+  techtxtOff: {
+    fontSize: 17,
+    color: 'grey',
+  },
+  techtxtOn: {
+    fontSize: 17,
+    color: 'green',
+    fontWeight: 'bold'
+  },
+  techContainer: {
+    justifyContent: 'center',
+    alignItems:'center',
+    flexDirection: 'row',
+    borderRadius: 50,
+    borderColor: '#b3b3b3',
+    borderWidth: 2,
+    margin: 5,
+    padding: 5
+  },
+  textInfoBold: {
+    fontFamily: "SF-Pro-Text-Bold",
+    fontSize: 30,
+    color: 'black',
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
+  },
+  textInfo: {
+    fontFamily: "SF-Pro-Text-Regular",
+    fontSize: 18,
+    color: 'black',
+    textAlign: 'center',
+  },
 });
 export default ByLocation;

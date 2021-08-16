@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { WebView } from 'react-native-webview';
 import { View, Text, Pressable, ActivityIndicator} from 'react-native';
+import FontAwesome from "react-native-vector-icons/Ionicons";
 
 class MapView extends Component {
     constructor(props) {
@@ -10,7 +11,6 @@ class MapView extends Component {
         }
     }
     render () {
-        console.log(this.state.position);
         let jsCode = `x1=`+this.props.route.params.position[0]+`; y1=`+this.props.route.params.position[1]+`;
                 govmap.zoomToXY({ x:`+this.props.route.params.position[0]+`, y: `+this.props.route.params.position[1]+`, level:7, marker: true });
                 var res = "";
@@ -26,25 +26,31 @@ class MapView extends Component {
                 `
         return (
             <View style={{flexDirection: 'column', flex:1}}>
-                    <WebView style={{flex:1}}
-                        source={{
-                        uri: 'http://165.227.137.116/map1.html',
-                        }}
-                        injectedJavaScript={jsCode}
-                        javaScriptEnabledAndroid={true}
-                        startInLoadingState={true}
-                        renderLoading={
-                            ()=> {
+                <WebView style={{zIndex: 0}}
+                    source={{
+                    uri: 'http://165.227.137.116/map1.html',
+                    }}
+                    injectedJavaScript={jsCode}
+                    javaScriptEnabledAndroid={true}
+                    startInLoadingState={true}
+                    renderLoading={
+                        () => {
                             return (<ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginBottom: '35%'}}/> )
-                            }
                         }
-                    >
-                    </WebView>
-                    <View style={{height: 100, width:'100%', backgroundColor: '#02316e', padding: 5}}>
-                        <Pressable onPress={(e)=>{this.props.navigation.goBack()}}>
-                            <Text style={{color: 'white', fontSize: 30, fontFamily: 'SF-Pro-Text-Bold', alignSelf: 'center'}}>Back</Text>
-                        </Pressable>
+                    }
+                >
+                </WebView>
+                <View style={{position: 'absolute', left: 20, top: 40, zIndex: 5, elevation: 30}}>
+                <Pressable onPress={(e)=>{this.props.navigation.goBack()}}>
+                    <View style={{width: 60, height: 60, backgroundColor: "#02316e", borderRadius: 50, alignItems: 'center', justifyContent: 'center', }} >
+                    <FontAwesome
+                        name={"arrow-back-outline"}
+                        size={30}
+                        color="#ffffff" 
+                    />
                     </View>
+                </Pressable>
+                </View>
             </View>
         );
     }
