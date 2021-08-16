@@ -19,7 +19,7 @@ This project was built using:
 For installation on Android devices:
 [Play Store](https://play.google.com/store/apps/details?id=com.cellu)
 
-Current version: 1.1.1
+Current version: 3.0.0
 
 Minimum Requirements: 
 Android 8.0 (Oreo) or newer
