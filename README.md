@@ -1,7 +1,7 @@
 # CELLU
 
-Cellu is an Android application which allows you to locate cellular antennas nearby.
-It displays antennas close to you according to the current device location, obtained by the device's GPS module.
+Cellu is an Android application which enables users the option to locate cellular antennas nearby.
+Cellu displays antennas located close to you according to the current device's location, obtained by the device's GPS module.
 Users can also locate nearby antennas based on a specific address that being chosen from a list of all streets and cities in Israel.
 
 This app is an open-source project, made with LOVE by me.
@@ -13,7 +13,8 @@ This project was built using:
 3. Google Maps API
 4. Israel's GOVMAP + DATA API
 5. Node.JS
-
+6. DigitalOcean Cloud
+7. 
 
 ## Installation
 For installation on Android devices:
