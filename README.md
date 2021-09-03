@@ -14,7 +14,7 @@ This project was built using:
 4. Israel's GOVMAP + DATA API
 5. Node.JS
 6. DigitalOcean Cloud
-7. 
+
 
 ## Installation
 For installation on Android devices:
