@@ -23,4 +23,4 @@ For installation on Android devices:
 Current version: 3.0.0
 
 Minimum Requirements: 
-Android 8.0 (Oreo) or newer
+Android 7.1 and up
