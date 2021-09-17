@@ -27,6 +27,7 @@ import Animation from './Animation';
 import FontAwesome from "react-native-vector-icons/Ionicons";
 
 import { InterstitialAd, AdEventType, TestIds } from '@react-native-firebase/admob';
+import admob, { MaxAdContentRating } from '@react-native-firebase/admob';
 
 const interstitial = InterstitialAd.createForAdRequest('ca-app-pub-6408045617472378/7907523375', {
   requestNonPersonalizedAdsOnly: true
@@ -43,6 +44,14 @@ class Hello extends React.Component {
       donate: false,
     }
     changeNavigationBarColor('transparent', false);
+    admob()
+    .setRequestConfiguration({
+      // Update all future requests suitable for parental guidance
+      maxAdContentRating: MaxAdContentRating.T,
+    })
+    .then(() => {
+      // Request config successfully set!
+    });
     const eventListener = interstitial.onAdEvent(type => {
       if (type === AdEventType.LOADED) {
         this.setState({loaded: true});
@@ -67,9 +76,9 @@ class Hello extends React.Component {
           </Pressable>
           <ScrollView>
             <View style={{alignItems:'center'}}>
-              <Image source = {require('../images/logo.png')} style={{width: 150, height: 150, marginTop: '15%'}} />
+              <Image source = {require('../images/logo.png')} style={{width: 150, height: 150, marginTop: '1%'}} />
               <Text style={styles.textInfoBold}>Cellu App</Text>
-              <Text style={styles.textInfo}>Version: 3.0.0</Text>
+              <Text style={styles.textInfo}>Version: 3.0.1</Text>
               <Text style={styles.textInfo}> 
               {`           
 המידע המוצג באפליקציה זו נאסף 
@@ -78,14 +87,14 @@ Govmap.gov.il
 Data.gov.il
 אין מפתחי האפליקציה אחראיים על
 נכונות ועדכניות המידע המוצג למשתמש.
+השימוש באפליקציה ובמידע המוצג בה הינו באחריות המשתמש בלבד.
 
-ליצירת קשר:
-github.com/alonilk2
-              `}
+ליצירת קשר:`}
               </Text>
               <Pressable onPress={(e) => Linking.openURL('mailto:alonilk2@gmail.com')} style={styles.BtnStyleEmail}>
                 <Text style={styles.txtBtnAddr}>Email Me</Text>
               </Pressable>
+              <Image source = {require('../images/abdev.png')} style={styles.abdev} />
             </View>
           </ScrollView>
         </View>
@@ -109,10 +118,10 @@ github.com/alonilk2
             </Pressable>
           </View>
           <View style={{zIndex: 1, marginTop: '10%'}}>
-            <View style={{alignSelf:'center', marginTop: 10}}>
+            <View style={{alignSelf:'center', marginTop: '10%'}}>
               <Image source = {require('../images/logo.png')} style={{width: 400, height: 400}} />
             </View>
-            <Text style={{alignSelf: 'center', color: 'white', fontFamily: "SF-Pro-Text",fontWeight: "bold", marginTop: '10%'}}>חפש אנטנות לפי...</Text>
+            <Text style={{alignSelf: 'center', color: 'white', fontFamily: "SF-Pro-Text",fontWeight: "bold", marginTop: '25%'}}>חפש אנטנות לפי...</Text>
             <View style={{flexDirection: 'row'}}>
               <Pressable onPress={(e) =>{
                 Global.settingsWindow = false
@@ -153,12 +162,18 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "center",
-    backgroundColor:'rgba(0,20,100,0.7)',
+    backgroundColor:'rgba(0,20,100,0.4)',
   },
   bg1: {
     flex: 1,
     resizeMode: "cover",
     justifyContent: "center",
+  },
+  abdev: {
+    marginTop: '15%',
+    width: '40%',
+    height: undefined,
+    aspectRatio: 2
   },
   info: {
     width: '100%',
@@ -199,26 +214,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 5
   },
-  BtnStyleCoffee: { 
-    borderRadius: 50,
-    color: 'white',
-    backgroundColor: '#ff6600',
-    width: '47%',
-    height: 60,
-    marginTop:'5%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5
-  },
   BtnStyleEmail: { 
     borderRadius: 50,
     color: 'white',
     backgroundColor: '#ff6600',
-    width: '47%',
+    width: '90%',
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 5
   },
   BtnStyleAddr: {   
     borderRadius: 50,

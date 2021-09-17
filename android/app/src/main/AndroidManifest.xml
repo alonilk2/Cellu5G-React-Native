@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.cellu">
+  package="com.cellu"
+  xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -17,7 +18,8 @@
       <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
     <meta-data
         android:name="com.google.android.gms.ads.APPLICATION_ID"
-        android:value="ca-app-pub-6408045617472378~9175059933"/> <!-- App ID -->
+        android:value="ca-app-pub-6408045617472378~9175059933"
+        tools:replace="android:value"/> <!-- App ID -->
       <!-- You can find your App ID in the AdMob UI -->
       <activity
         android:name=".MainActivity"
