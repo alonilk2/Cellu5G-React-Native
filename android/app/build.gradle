@@ -133,8 +133,8 @@ android {
         applicationId "com.cellu"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
-        versionName "3.0.1"
+        versionCode 15
+        versionName "3.0.2"
         multiDexEnabled true
     }
     splits {
@@ -194,19 +194,11 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    //implementation 'com.ironsource.sdk:mediationsdk:7.1.8' 
-    implementation 'com.google.firebase:firebase-core:16.0.3'
-     implementation 'com.google.firebase:firebase-iid'
-    implementation 'com.google.android.gms:play-services-ads:7.5.0'
-
+    implementation 'com.google.android.gms:play-services-ads:20.3.0'
     implementation 'androidx.annotation:annotation:1.0.0'
-    //implementation 'com.facebook.android:audience-network-sdk:6.+'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-
     implementation 'com.android.support:multidex:1.0.3'
-
-    //implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
-   // implementation 'com.google.ads.mediation:facebook:6.5.1.1'
+    implementation 'com.google.ads.mediation:facebook:6.6.0.0'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

@@ -1,6 +1,6 @@
 {
   "name": "Cellu",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -13,8 +13,6 @@
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-community/slider": "^3.0.3",
-    "@react-native-firebase/admob": "^10.6.3",
-    "@react-native-firebase/app": "^10.6.3",
     "@react-navigation/native": "^5.7.6",
     "@react-navigation/stack": "^5.9.3",
     "axios": "^0.21.1",
@@ -24,7 +22,6 @@
     "react-geocode": "^0.2.2",
     "react-native": "^0.64.2",
     "react-native-autocomplete-input": "^4.2.0",
-    "react-native-fbsdk-next": "^4.3.0",
     "react-native-geolocation-service": "^5.2.0",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-navigation-bar-color": "^2.0.1",

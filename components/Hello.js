@@ -17,8 +17,8 @@ import {
   ImageBackground,
   Pressable,
   Linking,
-  ActivityIndicator
-
+  ActivityIndicator,
+  NativeModules
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
@@ -26,12 +26,7 @@ import Global from './Global';
 import Animation from './Animation';
 import FontAwesome from "react-native-vector-icons/Ionicons";
 
-import { InterstitialAd, AdEventType, TestIds } from '@react-native-firebase/admob';
-import admob, { MaxAdContentRating } from '@react-native-firebase/admob';
-
-const interstitial = InterstitialAd.createForAdRequest('ca-app-pub-6408045617472378/7907523375', {
-  requestNonPersonalizedAdsOnly: true
-});
+const { AdmobInitiator } = NativeModules;
 
 // Will show it if already loaded, or wait for it to load and show it.
 class Hello extends React.Component {
@@ -44,29 +39,12 @@ class Hello extends React.Component {
       donate: false,
     }
     changeNavigationBarColor('transparent', false);
-    admob()
-    .setRequestConfiguration({
-      // Update all future requests suitable for parental guidance
-      maxAdContentRating: MaxAdContentRating.T,
-    })
-    .then(() => {
-      // Request config successfully set!
-    });
-    const eventListener = interstitial.onAdEvent(type => {
-      if (type === AdEventType.LOADED) {
-        this.setState({loaded: true});
-      }
-      if (type === AdEventType.CLOSED) {
-        this.setState({loaded: false});       
-      }
-    });
-    interstitial.load();
+
   }
 
   renderInfoWindow = () => {
     if(this.state.infoWindow === true) return (
       <Animation style={{height: '100%', width: '100%',position:'absolute', zIndex: 5, elevation: 30}} page={this}>
-
         <View style={styles.infoContainer}>
           <Pressable onPress={(e)=>this.setState({infoWindow: false})}>
             <FontAwesome
@@ -78,7 +56,7 @@ class Hello extends React.Component {
             <View style={{alignItems:'center'}}>
               <Image source = {require('../images/logo.png')} style={{width: 150, height: 150, marginTop: '1%'}} />
               <Text style={styles.textInfoBold}>Cellu App</Text>
-              <Text style={styles.textInfo}>Version: 3.0.1</Text>
+              <Text style={styles.textInfo}>Version: 3.0.2</Text>
               <Text style={styles.textInfo}> 
               {`           
 המידע המוצג באפליקציה זו נאסף 
@@ -125,7 +103,7 @@ Data.gov.il
             <View style={{flexDirection: 'row'}}>
               <Pressable onPress={(e) =>{
                 Global.settingsWindow = false
-                if(this.state.loaded) {interstitial.show()};
+                AdmobInitiator.showAd();
                 this.props.navigation.navigate('Location');
                 }} style={styles.BtnStyle}>
                 <Text style={styles.txtBtn}>מיקום נוכחי</Text>
@@ -162,7 +140,7 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "center",
-    backgroundColor:'rgba(0,20,100,0.4)',
+    backgroundColor:'rgba(0,20,100,0.3)',
   },
   bg1: {
     flex: 1,

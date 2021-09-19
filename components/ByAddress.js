@@ -7,11 +7,12 @@
 
 
 import React, {Component} from 'react';
-import {View, Image, StyleSheet, ImageBackground, TouchableOpacity, Text, TextInput} from 'react-native';
+import {View, Image, StyleSheet, ImageBackground, TouchableOpacity, Text, TextInput, NativeModules} from 'react-native';
 import axios from 'axios';
 import Autocomplete from 'react-native-autocomplete-input';
-
 import Global from './Global.js'
+
+const { AdmobInitiator } = NativeModules;
 
 export class ByAddress extends Component {
     constructor(props) {
@@ -25,7 +26,6 @@ export class ByAddress extends Component {
         }
 
     }
-
     async componentDidMount() {
         //Get list of cities in Israel from data.gov.il API
         do {
@@ -131,16 +131,7 @@ export class StreetList extends Component {
       loaded: false,
     }
     this.handleCityClick(this.props.route.params.item)
-    //this.renderInterstitialAd();
   }
-  /*renderInterstitialAd = async () => {
-    await AdMobInterstitial.setAdUnitID('ca-app-pub-6408045617472378/7907523375'); // Test ID, Replace with your-admob-unit-id
-    await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: true});
-  }
-  showInterstitialAd = async () => {
-    const res = await AdMobInterstitial.getIsReadyAsync()
-    if(res) await AdMobInterstitial.showAdAsync();
-  }*/
   async handleCityClick(name) {
       //Get list of streets in Israel from data.gov.il API
       do {
@@ -198,7 +189,7 @@ export class StreetList extends Component {
                   renderItem={({ item, i }) => (
                     <TouchableOpacity key={item} onPress={() => {
                       this.setState({ strQuery: item }); 
-                     // this.showInterstitialAd()
+                      AdmobInitiator.showAd();
                       this.props.navigation.navigate('MapByAddress', {street: item, city: this.state.cityName})
                       }}>
                       <Text style={styles.itemText}>{item}</Text>
@@ -273,7 +264,7 @@ const styles = StyleSheet.create({
   bg: {
     flex: 1,
     resizeMode: "cover",
-    backgroundColor:'rgba(0,20,100,0.7)',
+    backgroundColor:'rgba(0,20,100,0.3)',
     flexDirection: 'column',
     paddingTop: '15%',
     paddingBottom: '10%'
@@ -287,6 +278,7 @@ const styles = StyleSheet.create({
   bg1: {
     flex: 1,
     resizeMode: "cover",
+
   },
 
 });

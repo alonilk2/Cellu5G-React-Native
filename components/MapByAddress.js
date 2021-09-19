@@ -49,7 +49,7 @@ class MapByAddress extends Component {
 
   }
   componentDidMount() {
-     this.getGeolocation().then(this.setState({...this.state}));
+     this.getGeolocation().then(this.setState({...this.state})).catch(err => {this.setState({isLoading: false}); console.log(err)});
   }
   getGeolocation() {
     Geocode.setApiKey("AIzaSyCtP-auXe-kPUJMvxOZxiDACspzitfnlFo");
@@ -63,10 +63,7 @@ class MapByAddress extends Component {
           const { lat, lng } = response.results[0].geometry.location;
           var firstProjection = "+proj=tmerc +lat_0=31.73439361111111 +lon_0=35.20451694444445 +k=1.0000067 +x_0=219529.584 +y_0=626907.39 +ellps=GRS80 +towgs84=-48,55,52,0,0,0,0 +units=m +no_defs";
           resolve(this.setState({position: proj4(firstProjection,[lng,lat])}));
-      },
-      error => {
-          reject(console.error(error));
-      })
+      }).catch(error => reject(console.error(error)))
     })
   }
   /**
@@ -80,33 +77,37 @@ class MapByAddress extends Component {
     let data = JSON.parse(e.nativeEvent.data);
     let x, y, mindisttemp, tempentry, counter;
     let sortedList = [];
-    return new Promise((resolve, reject) => {
-      if(data.length > 0) {
-        for(x = 0; x < data.length-1; x++){
-          mindisttemp = x
-          for(y = x+1; y < data.length; y++)
-            if(parseInt(data[y].distance) < parseInt(data[mindisttemp].distance))
-              mindisttemp = y;
-          tempentry = data[x]
-          data[x] = data[mindisttemp]
-          data[mindisttemp] = tempentry
+    if(data === null) {
+      this.setState({isLoading: false});  
+      return;
+    }
+    if(data.length > 0) {
+      for(x = 0; x < data.length-1; x++){
+        mindisttemp = x
+        for(y = x+1; y < data.length; y++)
+          if(parseInt(data[y].distance) < parseInt(data[mindisttemp].distance))
+            mindisttemp = y;
+        tempentry = data[x]
+        data[x] = data[mindisttemp]
+        data[mindisttemp] = tempentry
+      }
+    }
+    else { 
+      this.setState({isLoading: false});
+      return;
+    }
+    counter = 0;
+    for(x = 0; x < data.length; x++){
+      let techarray = this.filterAntenna(data[x].Fields[18].Value);
+      if((Global.g5Toggle && techarray[2])
+        || (Global.g4Toggle && techarray[1])
+        || (Global.g3Toggle && techarray[0])
+        || (Global.g4Toggle && Global.g3Toggle && Global.g5Toggle)){
+          sortedList[counter] = data[x];
+          counter++;
         }
-      }
-      else {this.setState({isLoading: false}); reject('no data')}
-      counter = 0;
-      for(x = 0; x < data.length; x++){
-        let techarray = this.filterAntenna(data[x].Fields[18].Value);
-        if((Global.g5Toggle && techarray[2])
-          || (Global.g4Toggle && techarray[1])
-          || (Global.g3Toggle && techarray[0])
-          || (Global.g4Toggle && Global.g3Toggle && Global.g5Toggle)){
-            sortedList[counter] = data[x];
-            counter++;
-          }
-      }
-      resolve(this.setState({retDataFromWeb: sortedList, isLoading: false}));
-      reject('error');
-    })
+        this.setState({retDataFromWeb: sortedList, isLoading: false});
+    }
   }
   filterAntenna = (tech) => { 
     let parsed = tech.split(" ");
@@ -118,7 +119,6 @@ class MapByAddress extends Component {
     }
     return answer;
   }
-
   ItemView = ({item}) => {
     return (
       <View>
@@ -133,7 +133,6 @@ class MapByAddress extends Component {
   };
   handleListView = () => {
     if(this.state.isLoading) {
-      console.log(this.state.isLoading);
       return (<ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginTop: '20%'}}/>)}
     else return (this.antennaList())
   }
@@ -155,7 +154,7 @@ class MapByAddress extends Component {
       </SafeAreaView>
     )
   }
-    renderAntennaDescriptionWindow = () => {
+  renderAntennaDescriptionWindow = () => {
     if(this.state.antennaDescription === true) {
       let antenna = this.state.chosenAntenna;
       let broadcastTech = antenna[18].Value;
@@ -176,7 +175,6 @@ class MapByAddress extends Component {
             />
           </Pressable>
           <View style={{alignItems:'center'}}>
-
             <Image source = {require('../images/logo.png')} style={{width: 100, height: 100, marginTop: '3%'}} />
             <Text style={styles.textInfo}> 
               {antenna[0].FieldName}: {antenna[0].Value}{"\n"}
@@ -194,7 +192,6 @@ class MapByAddress extends Component {
               {antenna[15].FieldName}: {antenna[15].Value}{"\n"}
               {antenna[16].FieldName}: {antenna[16].Value}{"\n"}
               {antenna[17].FieldName}: {antenna[17].Value}{"\n"}
-
             </Text>
             <View style={styles.techContainer}>
               {three==1 ? <Text style={styles.techtxtOn}> 3G </Text> : <Text style={styles.techtxtOff}> 3G </Text>}
@@ -225,13 +222,11 @@ class MapByAddress extends Component {
        return (
       <View style={styles.MainContainer}>
         {this.renderAntennaDescriptionWindow()}
-
         <View style={styles.Header}>
           <View style={{flex: 2, flexDirection: 'row', marginBottom: '6%'}}>
             <View style={{flex: 2, marginLeft: 10, marginTop: 15 }}>
               <Pressable onPress={()=> {
                   Global.settingsWindow = true;
-                  console.log(Global.settingsWindow)
                   this.setState({settingsWindow: true})
                 }} style={{flex:1}}>
                 <FontAwesome
