@@ -18,17 +18,50 @@ import {
   Pressable,
   Linking,
   ActivityIndicator,
-  NativeModules
+  NativeModules,
+  Button
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Global from './Global';
 import Animation from './Animation';
 import FontAwesome from "react-native-vector-icons/Ionicons";
-
+import Animated, { withTiming, withRepeat, useSharedValue, useAnimatedStyle, Easing } from 'react-native-reanimated';
+import { Default } from "./styles/Default";
+import InfoWindow from './homescreen/InfoWindow';
 const { AdmobInitiator } = NativeModules;
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-// Will show it if already loaded, or wait for it to load and show it.
+const RenderLoadingView = (scaler) => {
+  const offset = useSharedValue(0.0);
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: offset.value
+    };
+  });
+  offset.value = withRepeat(withTiming(1, {
+    easing: Easing.elastic(0.95),
+    duration: 1000
+  }), -5, true);
+  return (
+    <>
+      <View style={Default.MainContainer}>
+        <StatusBar translucent backgroundColor='rgba(0,0,0,0)' barStyle='light-content' />
+        <ImageBackground source={require('../images/bg.jpg')} style={Default.bg1}>
+          <View style={Default.bg}>
+            <View style={{zIndex: 1, marginTop: '10%', alignItems: 'center'}}>
+              <Animated.Image source = {require('../images/logo.png')} style={[{width: 500, height: 500}, animatedStyle]} />
+              <Text style={Default.loadingtext}>טוען ...</Text>
+            </View>
+          </View>
+        </ImageBackground>
+      </View>
+    </>
+  );
+}
+
 class Hello extends React.Component {
   constructor () {
     super()
@@ -37,57 +70,46 @@ class Hello extends React.Component {
       modalDatavisible: true,
       loaded: false,
       donate: false,
+      adLoaded: false,
+      FirstInfoClick: false
     }
     changeNavigationBarColor('transparent', false);
-
+    this.CheckAdmobStatus();
   }
-
+  CheckAdmobStatus = async () => {
+    let startAdLoadTime = new Date();
+    let loaded = false, res;
+    await sleep(2000);
+    while((Date.now() - startAdLoadTime) < 25000 && loaded === false){
+      res = await AdmobInitiator.isAdLoaded().catch(e=> console.log(e))
+      if(res === "success"){
+        loaded = true;
+        this.setState({adLoaded: true})
+      }
+      else await sleep(100)
+      console.log(res)
+    }
+    this.setState({adLoaded: true})
+  }
+  CloseInfoWindow = () => {
+    this.setState({
+      infoWindow: false
+    })
+  }
   renderInfoWindow = () => {
-    if(this.state.infoWindow === true) return (
-      <Animation style={{height: '100%', width: '100%',position:'absolute', zIndex: 5, elevation: 30}} page={this}>
-        <View style={styles.infoContainer}>
-          <Pressable onPress={(e)=>this.setState({infoWindow: false})}>
-            <FontAwesome
-                name={"arrow-back-outline"}
-                size={30}
-            />
-          </Pressable>
-          <ScrollView>
-            <View style={{alignItems:'center'}}>
-              <Image source = {require('../images/logo.png')} style={{width: 150, height: 150, marginTop: '1%'}} />
-              <Text style={styles.textInfoBold}>Cellu App</Text>
-              <Text style={styles.textInfo}>Version: 3.0.2</Text>
-              <Text style={styles.textInfo}> 
-              {`           
-המידע המוצג באפליקציה זו נאסף 
-מתוך מאגרי המידע של 
-Govmap.gov.il
-Data.gov.il
-אין מפתחי האפליקציה אחראיים על
-נכונות ועדכניות המידע המוצג למשתמש.
-השימוש באפליקציה ובמידע המוצג בה הינו באחריות המשתמש בלבד.
-
-ליצירת קשר:`}
-              </Text>
-              <Pressable onPress={(e) => Linking.openURL('mailto:alonilk2@gmail.com')} style={styles.BtnStyleEmail}>
-                <Text style={styles.txtBtnAddr}>Email Me</Text>
-              </Pressable>
-              <Image source = {require('../images/abdev.png')} style={styles.abdev} />
-            </View>
-          </ScrollView>
-        </View>
-      </Animation>
+    return (
+      <InfoWindow infoWindow={this.state.infoWindow} CloseInfoWindow={this.CloseInfoWindow}></InfoWindow>
     )
   }
   render() {
-    return (
-      <Animation style={styles.MainContainer}>
+    if(this.state.adLoaded) return (
+      <View style={Default.MainContainer} >
         <StatusBar translucent backgroundColor='rgba(0,0,0,0)' barStyle='light-content' />
-        <ImageBackground source={require('../images/bg.jpg')} style={styles.bg1}>
-        <View style={styles.bg}>
-          {this.renderInfoWindow()}
+        <ImageBackground source={require('../images/bg.jpg')} style={Default.bg1}>
+        <Animation style={Default.bg} animationState={0}>
+          {this.state.FirstInfoClick ? this.renderInfoWindow() : null}
           <View style={{position: 'absolute', left: 25, top: 50}}>
-            <Pressable onPress={(e) => this.setState({infoWindow: true})}>
+            <Pressable onPress={(e) => this.setState({FirstInfoClick: true, infoWindow: true})}>
                 <FontAwesome
                     name={"information-circle-outline"}
                     size={40}
@@ -105,132 +127,22 @@ Data.gov.il
                 Global.settingsWindow = false
                 AdmobInitiator.showAd();
                 this.props.navigation.navigate('Location');
-                }} style={styles.BtnStyle}>
-                <Text style={styles.txtBtn}>מיקום נוכחי</Text>
+                }} style={Default.BtnStyle}>
+                <Text style={Default.txtBtn}>מיקום נוכחי</Text>
               </Pressable>
-              <Pressable onPress={(e) => this.props.navigation.navigate('ByAddress')} style={styles.BtnStyleAddr}>
-                <Text style={styles.txtBtnAddr}>כתובת</Text>
+              <Pressable onPress={(e) => this.props.navigation.navigate('ByAddress')} style={Default.BtnStyleAddr}>
+                <Text style={Default.txtBtnAddr}>כתובת</Text>
               </Pressable>
             </View>
           </View>
-        </View>
+        </Animation>
       </ImageBackground>
-      </Animation>
+      </View>
     );
+    else {
+      return (<RenderLoadingView />)
+    }
   }
 }
 
-const styles = StyleSheet.create({
-  MainContainer: {
-    flex: 1,
-    zIndex: 1,
-  },
-  infoContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,1)',
-    marginTop: '10%',
-    marginBottom: '10%',
-    padding: 20,
-    borderRadius: 20,
-    marginRight: '5%',
-    marginLeft: '5%',
-    elevation: 15,
-  },
-  bg: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center",
-    backgroundColor:'rgba(0,20,100,0.3)',
-  },
-  bg1: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center",
-  },
-  abdev: {
-    marginTop: '15%',
-    width: '40%',
-    height: undefined,
-    aspectRatio: 2
-  },
-  info: {
-    width: '100%',
-    height: '100%', 
-  },
-  coffee: {
-    width: '100%',
-    height: '100%', 
-  },
-
-  coffeePressable: {
-    width: 30,
-    height: 30,
-    alignSelf: 'center',
-    marginRight: '35%',
-    marginBottom: '20%',
-  },
-  textInfoBold: {
-    fontFamily: "SF-Pro-Text-Bold",
-    fontSize: 30,
-    color: 'black',
-    textAlign: 'left',
-    fontWeight: 'bold'
-  },
-  textInfo: {
-    fontFamily: "SF-Pro-Text-Regular",
-    fontSize: 18,
-    color: 'black',
-    textAlign: 'center',
-  },
-  BtnStyle: { 
-    borderRadius: 50,
-    color: 'black',
-    backgroundColor: 'white',
-    width: '47%',
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5
-  },
-  BtnStyleEmail: { 
-    borderRadius: 50,
-    color: 'white',
-    backgroundColor: '#ff6600',
-    width: '90%',
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  BtnStyleAddr: {   
-    borderRadius: 50,
-    borderColor:  '#ff6600',
-    borderWidth: 2,
-    color: 'black',
-    backgroundColor: 'transparent',
-    width: '47%',
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5,
-  },
-  txtBtn: {
-    fontFamily: "SF-Pro-Text",
-    fontSize: 20,
-    color: '#ff6600',
-    fontWeight: 'bold'
-  },
-  txtBtnAddr: {
-    fontFamily: "SF-Pro-Text",
-    fontSize: 20,
-    color: 'white',
-    fontWeight: 'bold'
-
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-});
 export default Hello;

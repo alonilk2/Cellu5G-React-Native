@@ -231,7 +231,7 @@ class MapByAddress extends Component {
                 }} style={{flex:1}}>
                 <FontAwesome
                     name={"settings-outline"}
-                    size={40}
+                    size={35}
                     color="#ffffff"
                 />
               </Pressable>
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     paddingTop: '8%'
   },
   Body: {
-    flex: 3,
+    flex: 4,
   },
   Paragraph: {
     fontFamily: "SF-Pro-Text-Bold",

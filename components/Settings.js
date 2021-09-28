@@ -116,9 +116,8 @@ const styles = StyleSheet.create({
     margin: 5
   },
   settings: {
-    flex: 3,
+    flex: 4,
     flexDirection: 'column',
-    paddingBottom: 50
   },
    BtnStyle1: { 
     borderRadius: 20,

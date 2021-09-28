@@ -1,6 +1,6 @@
 {
   "name": "Cellu",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -25,10 +25,11 @@
     "react-native-geolocation-service": "^5.2.0",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-navigation-bar-color": "^2.0.1",
+    "react-native-reanimated": "^2.0.0",
     "react-native-safe-area-context": "^3.3.0",
     "react-native-screens": "^2.13.0",
     "react-native-vector-icons": "^8.1.0",
-    "react-native-webview": "^10.9.2"
+    "react-native-webview": "^11.13.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import { WebView } from 'react-native-webview';
-import { View, Text, Pressable, ActivityIndicator} from 'react-native';
+import { View, Text, Pressable, ActivityIndicator, NativeModules } from 'react-native';
 import FontAwesome from "react-native-vector-icons/Ionicons";
-
+const { AdmobInitiator } = NativeModules;
 class MapView extends Component {
     constructor(props) {
         super(props)
@@ -41,7 +41,7 @@ class MapView extends Component {
                 >
                 </WebView>
                 <View style={{position: 'absolute', left: 20, top: 40, zIndex: 5, elevation: 30}}>
-                <Pressable onPress={(e)=>{this.props.navigation.goBack()}}>
+                <Pressable onPress={(e)=>{this.props.navigation.goBack(); AdmobInitiator.showAd();}}>
                     <View style={{width: 60, height: 60, backgroundColor: "#02316e", borderRadius: 50, alignItems: 'center', justifyContent: 'center', }} >
                     <FontAwesome
                         name={"arrow-back-outline"}

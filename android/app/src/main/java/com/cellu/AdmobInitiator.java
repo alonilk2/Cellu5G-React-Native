@@ -14,6 +14,8 @@ import android.util.Log;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
+import com.facebook.react.bridge.Promise;
+
 public class AdmobInitiator extends ReactContextBaseJavaModule {
     AdmobInitiator(ReactApplicationContext context) {
         super(context);
@@ -27,28 +29,6 @@ public class AdmobInitiator extends ReactContextBaseJavaModule {
         Activity activity = getCurrentActivity();
         InterstitialAd mInterstitialAd = MainActivity.getInterstitialAd();
         if (mInterstitialAd != null) {
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                @Override
-                public void onAdDismissedFullScreenContent() {
-                    // Called when fullscreen content is dismissed.
-                    Log.d("TAG", "The ad was dismissed.");
-                }
-
-                @Override
-                public void onAdFailedToShowFullScreenContent(AdError adError) {
-                    // Called when fullscreen content failed to show.
-                    Log.d("TAG", "The ad failed to show.");
-                }
-
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    // Called when fullscreen content is shown.
-                    // Make sure to set your reference to null so you don't
-                    // show it a second time.
-                    MainActivity.setInterstitialAd(null);
-                    Log.d("TAG", "The ad was shown.");
-                }
-            });
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run () {
@@ -62,5 +42,12 @@ public class AdmobInitiator extends ReactContextBaseJavaModule {
         } else {
             Log.d("TAG", "The interstitial ad wasn't ready yet.");
         }
+    }
+    @ReactMethod
+    public void isAdLoaded(final Promise promise) {
+        if(MainActivity.getAdStatus()) {
+            promise.resolve("success");
+        }
+        promise.reject("failure");
     }
 }

@@ -30,7 +30,6 @@ import Footer from './Footer';
 import Settings from './Settings';
 import Global from './Global.js';
 import Animation from './Animation';
-
 var WebViewRef = '';
 class ByLocation extends Component {
   constructor () {
@@ -253,7 +252,7 @@ class ByLocation extends Component {
                 }} style={{flex:1}}>
                 <FontAwesome
                     name={"settings-outline"}
-                    size={40}
+                    size={35}
                     color="#ffffff"
                 />
               </Pressable>
@@ -329,7 +328,7 @@ const styles = StyleSheet.create({
     paddingTop: '8%'
   },
   Body: {
-    flex: 3,
+    flex: 4,
   },
   Paragraph: {
     fontFamily: "SF-Pro-Text-Bold",

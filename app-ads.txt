@@ -1,2 +1,3 @@
 google.com, pub-6408045617472378, DIRECT, f08c47fec0942fa0
 facebook.com, ca-app-pub-6408045617472378~9175059933, DIRECT , c3e20eee3f780d68
+google.com, pub-3940256099942544, DIRECT, f08c47fec0942fa0
