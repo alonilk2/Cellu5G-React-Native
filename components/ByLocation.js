@@ -29,7 +29,7 @@ import Geolocation from 'react-native-geolocation-service';
 import Footer from './Footer';
 import Settings from './Settings';
 import Global from './Global.js';
-import Animation from './Animation';
+import AntennaDescription from './utils/AntennaDescription';
 var WebViewRef = '';
 class ByLocation extends Component {
   constructor () {
@@ -44,7 +44,8 @@ class ByLocation extends Component {
       loadingWV: true,
       settingsWindow: false,
       antennaDescription: false,
-      chosenAntenna: []
+      chosenAntenna: [],
+      FirstClick: false
     }
     changeNavigationBarColor('transparent', true);
     this.fetchData();
@@ -121,7 +122,10 @@ class ByLocation extends Component {
           data[mindisttemp] = tempentry
         }
       }
-      else {this.setState({isLoading:false}); reject('no data')}
+      else {
+        this.setState({isLoading:false});
+        reject('no data')
+      }
       counter = 0;
       for(x = 0; x < data.length; x++){
         let techarray = this.filterAntenna(data[x].Fields[18].Value);
@@ -152,7 +156,7 @@ class ByLocation extends Component {
     return (
       <View>
         <Pressable onPress={()=> {
-            this.setState({antennaDescription: true, chosenAntenna: item.Fields});
+            this.setState({FirstClick: true, antennaDescription: true, chosenAntenna: item.Fields});
           }}>
           <AntennaBlock key={item.Fields[1].Value} fields={item.Fields} dis={item.distance}/>
           <View style={styles.bottomBorder}></View>
@@ -174,57 +178,11 @@ class ByLocation extends Component {
       </SafeAreaView>
     )
   }
-  renderAntennaDescriptionWindow = () => {
-    if(this.state.antennaDescription === true) {
-      let antenna = this.state.chosenAntenna;
-      let broadcastTech = antenna[18].Value;
-      let three, four, five;
-      broadcastTech = broadcastTech.split(" ");
-      for(var i = 0; i < broadcastTech.length; i++){
-        if(broadcastTech[i] == "3") three=1;
-        if(broadcastTech[i] == "4") four=1;
-        if(broadcastTech[i] == "5") five=1;
-      }
-      return (
-      <Animation style={{flex: 1, height: '100%', width: '100%',position:'absolute', zIndex: 5, elevation: 30}} page={this}>
-        <ScrollView style={styles.infoContainer}>
-          <Pressable onPress={(e)=>this.setState({antennaDescription: false})}>
-            <FontAwesome
-                name={"arrow-back-outline"}
-                size={30}
-            />
-          </Pressable>
-          <View style={{alignItems:'center'}}>
-
-            <Image source = {require('../images/logo.png')} style={{width: 100, height: 100, marginTop: '3%'}} />
-            <View style={styles.techContainer}>
-              {three==1 ? <Text style={styles.techtxtOn}> 3G </Text> : <Text style={styles.techtxtOff}> 3G </Text>}
-              {four==1 ? <Text style={styles.techtxtOn}> 4G </Text> : <Text style={styles.techtxtOff}> 4G </Text>}
-              {five==1 ? <Text style={styles.techtxtOn}> 5G </Text> : <Text style={styles.techtxtOff}> 5G </Text>}
-            </View>
-            <Text style={styles.textInfo}> 
-              {antenna[0].FieldName}: {antenna[0].Value}{"\n"}
-              {antenna[1].FieldName}: {antenna[1].Value}{"\n"}
-              {antenna[2].FieldName}: {antenna[2].Value}{"\n"}
-              {antenna[3].FieldName}: {antenna[3].Value}{"\n"}
-              {antenna[4].FieldName}: {antenna[4].Value}{"\n"}
-              {antenna[5].FieldName}: {antenna[5].Value}{"\n"}
-              {antenna[6].FieldName}: {antenna[6].Value}{"\n"}
-              {antenna[7].FieldName}: {antenna[7].Value}{"\n"}
-              {antenna[8].FieldName}: {antenna[8].Value}{"\n"}
-              {antenna[9].FieldName}: {antenna[9].Value}{"\n"}
-              {antenna[10].FieldName}: {antenna[10].Value}{"\n"}
-              {antenna[11].FieldName}: {antenna[11].Value}{"\n"}
-              {antenna[15].FieldName}: {antenna[15].Value}{"\n"}
-              {antenna[16].FieldName}: {antenna[16].Value}{"\n"}
-              {antenna[17].FieldName}: {antenna[17].Value}{"\n"}
-
-            </Text>
-          </View>
-        </ScrollView>
-      </Animation>
-      )
-    }
+  CloseAntennaDescription = () => this.setState({antennaDescription: false})
+  AntennaDescription = () => {
+    return (
+      <AntennaDescription reference={this} />
+    )
   }
   render() {
     let jsCode = `x1=`+this.state.position[0]+`; y1=`+this.state.position[1]+`;
@@ -242,7 +200,7 @@ class ByLocation extends Component {
                   `
     return (
       <View style={styles.MainContainer}>
-        {this.renderAntennaDescriptionWindow()}
+        {this.state.FirstClick ? this.AntennaDescription() : null}
         <View style={styles.Header}>
           <View style={{flex: 2, flexDirection: 'row', marginBottom: '6%'}}>
             <View style={{flex: 2, marginLeft: 10, marginTop: 15 }}>
@@ -331,46 +289,13 @@ const styles = StyleSheet.create({
     flex: 4,
   },
   Paragraph: {
-    fontFamily: "SF-Pro-Text-Bold",
-    fontSize: 30,
+    fontSize: 35,
+    fontWeight: 'bold',
     color: 'white'
   },
   SmallText: {
-    fontFamily: "SF-Pro-Text-Regular",
-    fontSize: 15,
-    color: 'rgba(255,255,255,0.6)'
-  },
-  techtxtOff: {
     fontSize: 17,
-    color: 'grey',
-  },
-  techtxtOn: {
-    fontSize: 17,
-    color: 'green',
-    fontWeight: 'bold'
-  },
-  techContainer: {
-    justifyContent: 'center',
-    alignItems:'center',
-    flexDirection: 'row',
-    borderRadius: 50,
-    borderColor: '#b3b3b3',
-    borderWidth: 2,
-    margin: 5,
-    padding: 5
-  },
-  textInfoBold: {
-    fontFamily: "SF-Pro-Text-Bold",
-    fontSize: 30,
-    color: 'black',
-    fontWeight: 'bold',
-    alignSelf: 'flex-start',
-  },
-  textInfo: {
-    fontFamily: "SF-Pro-Text-Regular",
-    fontSize: 18,
-    color: 'black',
-    textAlign: 'center',
+    color: 'rgba(255,255,255,0.7)'
   },
 });
 export default ByLocation;

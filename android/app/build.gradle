@@ -133,8 +133,8 @@ android {
         applicationId "com.cellu"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 16
-        versionName "3.1.0"
+        versionCode 19
+        versionName "3.2.2"
         multiDexEnabled true
     }
     splits {

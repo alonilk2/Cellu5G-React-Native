@@ -3,7 +3,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-const Default = StyleSheet.create({
+const styles = StyleSheet.create({
   MainContainer: {
     flex: 1,
     zIndex: 1,
@@ -37,27 +37,34 @@ const Default = StyleSheet.create({
     width: '100%',
     height: '100%', 
   },
-  coffee: {
-    width: '100%',
-    height: '100%', 
+  techtxtOff: {
+    fontSize: 17,
+    color: 'grey',
   },
-
-  coffeePressable: {
-    width: 30,
-    height: 30,
-    alignSelf: 'center',
-    marginRight: '35%',
-    marginBottom: '20%',
+  techtxtOn: {
+    fontSize: 17,
+    color: 'green',
+    fontWeight: 'bold'
+  },
+  techContainer: {
+    justifyContent: 'center',
+    alignItems:'center',
+    flexDirection: 'row',
+    borderRadius: 50,
+    borderColor: '#b3b3b3',
+    borderWidth: 2,
+    margin: 5,
+    padding: 5
   },
   textInfoBold: {
     fontFamily: "SF-Pro-Text-Bold",
     fontSize: 30,
     color: 'black',
-    textAlign: 'left',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   textInfo: {
-    fontFamily: "SF-Pro-Text",
+    fontFamily: "SF-Pro-Text-Regular",
     fontSize: 18,
     color: 'black',
     textAlign: 'center',
@@ -100,17 +107,14 @@ const Default = StyleSheet.create({
     margin: 5,
   },
   txtBtn: {
-    fontFamily: "SF-Pro-Text",
-    fontSize: 20,
+    fontSize: 25,
     color: '#ff6600',
     fontWeight: 'bold'
   },
   txtBtnAddr: {
-    fontFamily: "SF-Pro-Text",
-    fontSize: 20,
+    fontSize: 25,
     color: 'white',
     fontWeight: 'bold'
-
   },
   container: {
     flex: 1,
@@ -120,4 +124,4 @@ const Default = StyleSheet.create({
   },
 });
 
-export { Default };
+export { styles };
