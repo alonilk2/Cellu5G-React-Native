@@ -1,6 +1,6 @@
 {
   "name": "Cellu",
-  "version": "3.2.2",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,7 +10,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-community/slider": "^3.0.3",
     "@react-navigation/native": "^5.7.6",
@@ -18,18 +17,18 @@
     "axios": "^0.21.1",
     "fbjs": "^3.0.0",
     "proj4": "^2.6.2",
-    "react": "16.13.1",
+    "react": "^17.0.2",
     "react-geocode": "^0.2.2",
-    "react-native": "^0.64.2",
+    "react-native": "^0.66.3",
     "react-native-autocomplete-input": "^4.2.0",
     "react-native-geolocation-service": "^5.2.0",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-navigation-bar-color": "^2.0.1",
-    "react-native-reanimated": "^2.0.0",
+    "react-native-reanimated": "^2.2.4",
     "react-native-safe-area-context": "^3.3.0",
     "react-native-screens": "^2.13.0",
     "react-native-vector-icons": "^8.1.0",
-    "react-native-webview": "^11.13.0"
+    "react-native-webview": "^11.14.3"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

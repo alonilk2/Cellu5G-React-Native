@@ -104,15 +104,15 @@ const styles = StyleSheet.create({
     height: 70,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 5,
+    margin: 5
   },
   txtBtn: {
-    fontSize: 25,
+    fontSize: 22,
     color: '#ff6600',
     fontWeight: 'bold'
   },
   txtBtnAddr: {
-    fontSize: 25,
+    fontSize: 22,
     color: 'white',
     fontWeight: 'bold'
   },

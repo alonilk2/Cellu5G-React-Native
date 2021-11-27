@@ -2,37 +2,30 @@ import React, {Component} from 'react';
 import { WebView } from 'react-native-webview';
 import { View, Text, Pressable, ActivityIndicator, NativeModules } from 'react-native';
 import FontAwesome from "react-native-vector-icons/Ionicons";
+import * as Utils from './utils/Utils'
+import Global from './Global.js'
+
 const { AdmobInitiator } = NativeModules;
 class MapView extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            position: props.route.params.position
-        }
+        this.state = { position: props.route.params.position }
     }
     render () {
-        let jsCode = `x1=`+this.props.route.params.position[0]+`; y1=`+this.props.route.params.position[1]+`;
-                govmap.zoomToXY({ x:`+this.props.route.params.position[0]+`, y: `+this.props.route.params.position[1]+`, level:7, marker: true });
-                var res = "";
-                var params = {
-                    LayerName: 'cell_active',
-                    Point: {x: x1, y: y1},
-                    Radius:800
-                };
-                var win = window.ReactNativeWebView;
-                govmap.getLayerData(params).then(function(response){
-                    win.postMessage(JSON.stringify(response.data));
-                });  
-                `
         return (
             <View style={{flexDirection: 'column', flex:1}}>
                 <WebView style={{zIndex: 0}}
                     source={{
                     uri: 'http://165.227.137.116/map1.html',
                     }}
-                    injectedJavaScript={jsCode}
+                    injectedJavaScript={Utils.jsCode(
+                    this.state.position[0],
+                    this.state.position[1],
+                    Global.radius,
+                    )}
                     javaScriptEnabledAndroid={true}
                     startInLoadingState={true}
+                    scalesPageToFit={false}
                     renderLoading={
                         () => {
                             return (<ActivityIndicator color="#ff6a00" size="large" style={{alignSelf:'center', marginBottom: '35%'}}/> )

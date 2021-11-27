@@ -12,14 +12,23 @@
                     layers: ["cell_active"],
                     showXY: true,
                     identifyOnClick: true,
-                    isEmbeddedToggle: true,
+                    isEmbeddedToggle: false,
                     background: "1",
                     layersMode: 4,
-					bgButten: false,
                     zoomButtons:false,
+                    visibleLayers: ["cell_active"],
 					onLoad: function (e){
 						handleLoad()
-					}
+					},
+                    onClick: function (e)
+                    {
+                        handleLoad()
+                       showResult(e);                        
+                    },
+                    onPan: function (e)
+                    {
+                       showResult(e);            
+                    }
                 });
         });
 		var x1, y1, address;
