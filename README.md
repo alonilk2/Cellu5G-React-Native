@@ -3,7 +3,7 @@
 
 ![Cellu5G Logo](https://eamobileisrael.com/cellu.png)
 
-##Description
+## Description
 
 Cellu is an Android application which enables users the option to locate cellular antennas nearby.
 Cellu displays antennas located close to you according to the current device's location, obtained by the device's GPS module.
