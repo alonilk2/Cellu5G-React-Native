@@ -25,8 +25,8 @@ For any question, bug report, request, suggestion or anything else, please feel 
 ## Installation
 
 **PlayStore Install:
-[Cellu5G-אנטנות סלולריות קרובות](https://play.google.com/store/apps/details?id=com.cellu)
-**
+[Cellu5G-אנטנות סלולריות קרובות](https://play.google.com/store/apps/details?id=com.cellu)**
+
 Current version: 4.0.0
 
 ### Minimum Requirements: 
