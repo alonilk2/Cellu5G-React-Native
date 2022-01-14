@@ -1,7 +1,8 @@
 # Cellu5G - Locate Cellular Antennas in Israel
 
-
-![Cellu5G Logo](https://eamobileisrael.com/cellu.png)
+<p align="center">
+  <img src="https://eamobileisrael.com/cellu.png" alt="Cellu5G Logo"/>
+</p>
 
 ## Description
 
