@@ -1,8 +1,6 @@
  /*
-  * AddressInput class component - display and choose a city to get antenna's deployment
-  * StreetList class component - display and choose a street to get antenna's deployment.
   * @author [Alon Barenboim](https://github.com/alonilk2)
-  * @version 1.0.0
+  * @version 4.0.0
   */
 
 
