@@ -13,14 +13,14 @@ This project was built using:
 3. Google Maps API
 4. Israel's GOVMAP + DATA API
 5. Node.JS
-6. DigitalOcean Cloud
+6. DigitalOcean
 
 
 ## Installation
 For installation on Android devices:
 [Play Store](https://play.google.com/store/apps/details?id=com.cellu)
 
-Current version: 3.0.0
+Current version: 4.0.0
 
 Minimum Requirements: 
 Android 7.1 and up
