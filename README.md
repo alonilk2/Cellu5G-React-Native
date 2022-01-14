@@ -1,7 +1,7 @@
 # Cellu5G - Locate Cellular Antennas in Israel
 
 
-![Cellu5G Logo](https://eamobileisrael.com/cellu.png)
+        ![Cellu5G Logo](https://eamobileisrael.com/cellu.png)
 
 
 Cellu is an Android application which enables users the option to locate cellular antennas nearby.
