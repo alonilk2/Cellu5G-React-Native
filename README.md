@@ -29,4 +29,4 @@ PlayStore Install:
 Current version: 4.0.0
 
 ### Minimum Requirements: 
-Android 7.1 and up
+Android 7.1 and newer
