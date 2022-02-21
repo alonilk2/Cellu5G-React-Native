@@ -6,7 +6,7 @@
 
 ## Description
 
-Cellu is an Android application which enables users the option to locate cellular antennas nearby.
+Cellu is an Android application which allows users to locate cellular antennas in Israel.
 Cellu displays antennas located close to you according to the current device's location, obtained by the device's GPS module.
 Users can also locate nearby antennas based on a specific address that being chosen from a list of all streets and cities in Israel.
 
