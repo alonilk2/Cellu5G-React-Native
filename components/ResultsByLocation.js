@@ -98,56 +98,24 @@ class ResultsByLocation extends Component {
    */
   handleMessage = e => {
     let data = JSON.parse(e.nativeEvent.data)
-    let tempMinDistanceIdx
-    let tempEntry
-    let counter
-    let sortedList = []
     return new Promise((resolve, reject) => {
       if (!data) {
         this.setState({isLoading: false})
         reject('no data')
       } else {
-        for (let x = 0; x < data.length - 1; x++) {
-          tempMinDistanceIdx = x
-          for (let y = x + 1; y < data.length; y++)
-            if (
-              parseInt(data[y].distance) <
-              parseInt(data[tempMinDistanceIdx].distance)
-            )
-              tempMinDistanceIdx = y
-          tempEntry = data[x]
-          data[x] = data[tempMinDistanceIdx]
-          data[tempMinDistanceIdx] = tempEntry
-        }
+        data = Utils.SortAntennasByDistance(data)
       }
-      counter = 0
-      for (x = 0; x < data.length; x++) {
-        let bcastTechFlagArr = Utils.filterAntenna(data[x].Fields[18].Value)
-        if (
-          (Global.g5Toggle && bcastTechFlagArr[2]) ||
-          (Global.g4Toggle && bcastTechFlagArr[1]) ||
-          (Global.g3Toggle && bcastTechFlagArr[0]) ||
-          (Global.g4Toggle && Global.g3Toggle && Global.g5Toggle)
-        ) {
-          sortedList[counter] = data[x]
-          counter++
-        }
-      }
-      resolve(this.setState({retDataFromWeb: sortedList, isLoading: false}))
+      let FilteredSortedList = Utils.FilterAntennasByTech(data)
+      resolve(this.setState({retDataFromWeb: FilteredSortedList, isLoading: false}))
     }).catch(e => console.error(e))
   }
-  /**
-   * antennaList creates list of AntennaBlocks out of each antenna located near the user
-   * for displaying.
-   *
-   * @author [Alon Barenboim]
-   */
 
   reRenderPage = () => {
     this.fetchData()
     WebViewRef && WebViewRef.reload()
     this.setState({retDataFromWeb: '', isLoading: true})
   }
+
   RenderItemView = ({item}) => {
     return (
       <View>
@@ -171,7 +139,7 @@ class ResultsByLocation extends Component {
   }
   renderBody = () => {
     if (Global.settingsWindow)
-      return (<Settings reRenderPage={this.reRenderPage} page={this} />)
+      return <Settings reRenderPage={this.reRenderPage} page={this} />
     else
       return (
         <SafeAreaView style={styles.Body}>
@@ -235,7 +203,7 @@ class ResultsByLocation extends Component {
               <WebView
                 ref={WEBVIEW_REF => (WebViewRef = WEBVIEW_REF)}
                 source={{
-                  uri: 'http://165.227.137.116/map1.html',
+                  uri: 'https://alonilk2.github.io/map1/',
                 }}
                 injectedJavaScript={Utils.jsCode(
                   this.state.position[0],
@@ -245,7 +213,6 @@ class ResultsByLocation extends Component {
                 javaScriptEnabledAndroid={true}
                 startInLoadingState={true}
                 scalesPageToFit={false}
-
                 onMessage={event => this.handleMessage(event)}
                 onLoadEnd={event => this.setState({loadingWV: false})}
                 renderLoading={() => {

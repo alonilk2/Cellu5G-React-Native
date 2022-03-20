@@ -52,26 +52,18 @@ export class StreetInput extends Component {
         .catch(err => console.log('street error:' + err))
     } while (this.state.lastResultStr === 100)
   }
-  getStreets = str => {
-    if (str === '' || this.state.cityFlag === false) return []
-    var streetsNamesArr = []
-    for (street of this.state.streetsObj) 
-      if (Utils.isStringStartsWithSubString(street.שם_רחוב, str) && street.שם_רחוב)
-        streetsNamesArr.push(street.שם_רחוב)
-    return streetsNamesArr
-  }
   render () {
     return (
       <View style={styles.MainContainer}>
         <ImageBackground
-          source={require('../images/bg.jpg')}
+          source={{uri:'https://alonilk2.github.io/map1/bg.jpg'}}
           style={styles.bg1}>
           <View style={styles.bg}>
             <Autocomplete
               autoCapitalize='none'
               autoCorrect={false}
               placeholder='Enter Street Name'
-              data={this.getStreets(this.state.strQuery)}
+              data={Utils.FilterByName(this.state.streetsObj,this.state.strQuery,'שם_רחוב')}
               value={this.state.strQuery}
               listStyle={styles.ListStyle}
               listContainerStyle={styles.ListContainer}

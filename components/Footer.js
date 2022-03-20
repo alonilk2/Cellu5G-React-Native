@@ -16,7 +16,8 @@ const Footer = props => {
         style={{marginTop: '30%'}}
       />
     )
-  } else if (props.type === 'gps') // Error message for GPS-Based antennas search
+  } else if (props.type === 'gps')
+    // Error message for GPS-Based antennas search
     return (
       <View style={styles.listsec}>
         <Text
@@ -52,7 +53,8 @@ const Footer = props => {
         </Pressable>
       </View>
     )
-  else // Error message for Address-Based antennas search
+  // Error message for Address-Based antennas search
+  else
     return (
       <View style={styles.footer}>
         <View style={styles.listsec}>

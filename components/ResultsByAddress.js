@@ -49,10 +49,7 @@ class ResultsByAddress extends Component {
     }
     changeNavigationBarColor('transparent', true)
   }
-    /**
-   * getGeolocation calculates and provides geolocation information for processing.
-   * @author [Alon Barenboim]
-   */
+
   componentDidMount () {
     getGeolocation(this.state.street, this.state.city)
       .then(res => this.setState({...this.state, position: res}))
@@ -61,47 +58,26 @@ class ResultsByAddress extends Component {
 
   /**
    * handleMessage gets an event from WebView and handles the event.
-   * It gets a nativeEvent contains list of antennas, sorts and saves it in retDataFromWeb state.
+   * It gets a nativeEvent contains list of antennas, sorts, filters by antenna technology
+   * and saves it in retDataFromWeb state.
    *
    * @param e A nativeEvent contains list of antennas sent from WebView.
    * @author [Alon Barenboim]
    */
   handleMessage = e => {
     let data = JSON.parse(e.nativeEvent.data)
-    let x, y, mindisttemp, tempentry, counter
-    let sortedList = []
-    if (data === null) {
-      this.setState({isLoading: false})
-      return
-    }
-    if (data.length > 0) {
-      for (x = 0; x < data.length - 1; x++) {
-        mindisttemp = x
-        for (y = x + 1; y < data.length; y++)
-          if (parseInt(data[y].distance) < parseInt(data[mindisttemp].distance))
-            mindisttemp = y
-        tempentry = data[x]
-        data[x] = data[mindisttemp]
-        data[mindisttemp] = tempentry
+    return new Promise((resolve, reject) => {
+      if (!data) {
+        this.setState({isLoading: false})
+        reject('no data')
+      } else {
+        data = Utils.SortAntennasByDistance(data)
       }
-    } else {
-      this.setState({isLoading: false})
-      return
-    }
-    counter = 0
-    for (x = 0; x < data.length; x++) {
-      let techarray = Utils.filterAntenna(data[x].Fields[18].Value)
-      if (
-        (Global.g5Toggle && techarray[2]) ||
-        (Global.g4Toggle && techarray[1]) ||
-        (Global.g3Toggle && techarray[0]) ||
-        (Global.g4Toggle && Global.g3Toggle && Global.g5Toggle)
-      ) {
-        sortedList[counter] = data[x]
-        counter++
-      }
-      this.setState({retDataFromWeb: sortedList, isLoading: false})
-    }
+      let FilteredSortedList = Utils.FilterAntennasByTech(data)
+      resolve(
+        this.setState({retDataFromWeb: FilteredSortedList, isLoading: false}),
+      )
+    }).catch(e => console.error(e))
   }
 
   ItemView = ({item}) => {
@@ -125,6 +101,7 @@ class ResultsByAddress extends Component {
       </View>
     )
   }
+
   handleListView = () => {
     if (this.state.isLoading) {
       return (
@@ -136,10 +113,12 @@ class ResultsByAddress extends Component {
       )
     } else return this.antennaList()
   }
+
   reRenderPage = () => {
     WebViewRef && WebViewRef.reload()
     this.setState({retDataFromWeb: '', isLoading: true})
   }
+
   renderBody = () => {
     if (Global.settingsWindow)
       return <Settings reRenderPage={this.reRenderPage} page={this} />
@@ -163,7 +142,9 @@ class ResultsByAddress extends Component {
         </SafeAreaView>
       )
   }
+
   CloseAntennaDescription = () => this.setState({antennaDescription: false})
+
   render () {
     return (
       <View style={styles.MainContainer}>
@@ -206,7 +187,7 @@ class ResultsByAddress extends Component {
               <WebView
                 ref={WEBVIEW_REF => (WebViewRef = WEBVIEW_REF)}
                 source={{
-                  uri: 'http://165.227.137.116/map1.html',
+                  uri: 'https://alonilk2.github.io/map1/',
                 }}
                 injectedJavaScript={Utils.jsCode(
                   this.state.position[0],

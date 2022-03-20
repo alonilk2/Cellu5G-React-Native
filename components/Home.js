@@ -49,10 +49,10 @@ class Home extends React.Component {
   CloseInfoWindow = () => this.setState({infoWindow: false})
 
   /**
-    * CheckAdmobStatus check for AdMob request status every 0.5 seconds.
-    * If no positive response recieved after 15 seconds -> abort.
-    * Initial sleep time for loading view was set to 2 seconds.
-    * @author [Alon Barenboim]
+   * CheckAdmobStatus check for AdMob request status every 0.5 seconds.
+   * If no positive response recieved after 15 seconds -> abort.
+   * Initial sleep time for loading view was set to 2 seconds.
+   * @author [Alon Barenboim]
    */
   CheckAdmobStatus = async () => {
     let startAdLoadTime = new Date()
@@ -79,7 +79,7 @@ class Home extends React.Component {
             barStyle='light-content'
           />
           <ImageBackground
-            source={require('../images/bg.jpg')}
+            source={{uri: 'https://alonilk2.github.io/map1/bg.jpg'}}
             style={styles.bg1}>
             <Animation style={styles.bg} animationState={0}>
               {this.state.FirstInfoClick ? (
@@ -103,7 +103,7 @@ class Home extends React.Component {
               <View style={{zIndex: 1, marginTop: '10%'}}>
                 <View style={{alignSelf: 'center', marginTop: '15%'}}>
                   <Image
-                    source={require('../images/logo.png')}
+                    source={{uri: 'https://alonilk2.github.io/map1/logo.png'}}
                     style={{width: 500, height: 500}}
                   />
                 </View>

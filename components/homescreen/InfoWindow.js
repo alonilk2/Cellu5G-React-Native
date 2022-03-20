@@ -35,7 +35,7 @@ const InfoWindow = props => {
               alignItems: 'center',
             }}>
             <Image
-              source={require('../../images/logo.png')}
+              source={{uri: 'https://alonilk2.github.io/map1/logo.png'}}
               style={{
                 width: 150,
                 height: 150,
@@ -43,18 +43,17 @@ const InfoWindow = props => {
               }}
             />
             <Text style={styles.textInfoBold}>Cellu App</Text>
-            <Text style={styles.textInfo}>Version: 4.0.0</Text>
             <Text style={styles.textInfo}>
-              {`           
+              {`Version: 4.0.1
+              
 המידע המוצג באפליקציה זו נאסף 
 מתוך מאגרי המידע של 
-Govmap.gov.il
-Data.gov.il
-אין מפתחי האפליקציה אחראיים על
-נכונות ועדכניות המידע המוצג למשתמש.
-השימוש באפליקציה ובמידע המוצג בה הינו באחריות המשתמש בלבד.
 
-ליצירת קשר:`}
+govmap.gov.il & data.gov.il
+
+ואין מפתחי האפליקציה אחראיים על
+נכונות ועדכניות המידע המוצג מהם למשתמש.
+`}
             </Text>
             <Pressable
               onPress={e => Linking.openURL('mailto:alonilk2@gmail.com')}
@@ -62,7 +61,7 @@ Data.gov.il
               <Text style={styles.txtBtnAddr}>Email Me</Text>
             </Pressable>
             <Image
-              source={require('../../images/abdev.png')}
+              source={{uri: 'https://alonilk2.github.io/map1/abdev.png'}}
               style={styles.abdev}
             />
           </View>

@@ -22,10 +22,10 @@ export default function RenderLoadingView() {
     <>
       <View style={styles.MainContainer}>
         <StatusBar translucent backgroundColor='rgba(0,0,0,0)' barStyle='light-content' />
-        <ImageBackground source={require('../../images/bg.jpg')} style={styles.bg1}>
+        <ImageBackground source={{uri:'https://alonilk2.github.io/map1/bg.jpg'}} style={styles.bg1}>
           <View style={styles.bg}>
             <View style={{zIndex: 1, marginTop: '10%', alignItems: 'center'}}>
-              <Animated.Image source = {require('../../images/logo.png')} style={[{width: 500, height: 500}, animatedStyle]} />
+              <Animated.Image source={{uri:'https://alonilk2.github.io/map1/logo.png'}} style={[{width: 500, height: 500}, animatedStyle]} />
               <Text style={styles.loadingtext}>טוען ...</Text>
             </View>
           </View>
