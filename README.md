@@ -1,5 +1,14 @@
 # Cellu5G - Locate Cellular Antennas In Israel
 
+## Installation
+
+**PlayStore Install:
+[Cellu5G-אנטנות סלולריות קרובות](https://play.google.com/store/apps/details?id=com.cellu)**
+
+Current version: 4.0.1
+
+
+
 <div align="center">
   <img src="https://play-lh.googleusercontent.com/S-M80OeU9HSUOZQWKhO3OIQU3VMaspfYcaoLMai5dYKL_xsAoHhWU45EQ7H3eot1NA=w1920-h961-rw" alt="Cellu5G" width='31.5%'/>
   <img src="https://play-lh.googleusercontent.com/nHM9Ne6Yb7n_7GltdpmN2PoK4Vb7eUrGLsgB_EQXcTuh6aT3P9SK6jEXFTsjXJ_FeA=w1920-h961-rw" alt="Cellu5G" width='30%'/>
@@ -25,12 +34,6 @@ For any question, bug report, request, suggestion or anything else, please feel 
 6. DigitalOcean
 
 
-## Installation
-
-**PlayStore Install:
-[Cellu5G-אנטנות סלולריות קרובות](https://play.google.com/store/apps/details?id=com.cellu)**
-
-Current version: 4.0.0
 
 ### Minimum Requirements: 
-Android 7.1 and newer
+Android 5 and up
