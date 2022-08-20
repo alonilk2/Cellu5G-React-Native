@@ -5,35 +5,25 @@
  * @version 1.0.0
  */
 
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import {
-  StyleSheet,
-  SafeAreaView,
-  FlatList,
-  ScrollView,
-  View,
-  Text,
-  Pressable,
-  StatusBar,
-  Image,
-  ActivityIndicator,
+  ActivityIndicator, FlatList, Pressable, SafeAreaView, Text, View
 } from 'react-native'
-import {WebView} from 'react-native-webview'
-import AntennaBlock from './AntennaBlock'
 import changeNavigationBarColor from 'react-native-navigation-bar-color'
-import Settings from './Settings'
-import Global from './Global.js'
-import Footer from './Footer'
-import Animation from './Animation'
 import FontAwesome from 'react-native-vector-icons/Ionicons'
+import { WebView } from 'react-native-webview'
+import AntennaBlock from './AntennaBlock'
+import Footer from './Footer'
+import Global from './Global.js'
+import Settings from './Settings'
+import { styles } from './styles/ResultsViewStyle.js'
 import AntennaDescription from './utils/AntennaDescription'
-import {styles} from './styles/ResultsViewStyle.js'
+import { getGeolocation } from './utils/GeolocationProvider'
 import * as Utils from './utils/Utils'
-import {getGeolocation} from './utils/GeolocationProvider'
 var WebViewRef = ''
 
 class ResultsByAddress extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       behavior: 'position',
@@ -50,10 +40,10 @@ class ResultsByAddress extends Component {
     changeNavigationBarColor('transparent', true)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     getGeolocation(this.state.street, this.state.city)
-      .then(res => this.setState({...this.state, position: res}))
-      .catch(err => this.setState({isLoading: false}))
+      .then(res => this.setState({ ...this.state, position: res }))
+      .catch(err => this.setState({ isLoading: false }))
   }
 
   /**
@@ -68,19 +58,19 @@ class ResultsByAddress extends Component {
     let data = JSON.parse(e.nativeEvent.data)
     return new Promise((resolve, reject) => {
       if (!data) {
-        this.setState({isLoading: false})
+        this.setState({ isLoading: false })
         reject('no data')
       } else {
         data = Utils.SortAntennasByDistance(data)
       }
       let FilteredSortedList = Utils.FilterAntennasByTech(data)
       resolve(
-        this.setState({retDataFromWeb: FilteredSortedList, isLoading: false}),
+        this.setState({ retDataFromWeb: FilteredSortedList, isLoading: false }),
       )
     }).catch(e => console.error(e))
   }
 
-  ItemView = ({item}) => {
+  ItemView = ({ item }) => {
     return (
       <View>
         <Pressable
@@ -108,7 +98,7 @@ class ResultsByAddress extends Component {
         <ActivityIndicator
           color='#ff6a00'
           size='large'
-          style={{alignSelf: 'center', marginTop: '20%'}}
+          style={{ alignSelf: 'center', marginTop: '20%' }}
         />
       )
     } else return this.antennaList()
@@ -116,7 +106,7 @@ class ResultsByAddress extends Component {
 
   reRenderPage = () => {
     WebViewRef && WebViewRef.reload()
-    this.setState({retDataFromWeb: '', isLoading: true})
+    this.setState({ retDataFromWeb: '', isLoading: true })
   }
 
   renderBody = () => {
@@ -143,21 +133,21 @@ class ResultsByAddress extends Component {
       )
   }
 
-  CloseAntennaDescription = () => this.setState({antennaDescription: false})
+  CloseAntennaDescription = () => this.setState({ antennaDescription: false })
 
-  render () {
+  render() {
     return (
       <View style={styles.MainContainer}>
         {this.state.FirstClick ? <AntennaDescription reference={this} /> : null}
         <View style={styles.Header}>
-          <View style={{flex: 2, flexDirection: 'row', marginBottom: '6%'}}>
-            <View style={{flex: 2, marginLeft: 10, marginTop: 15}}>
+          <View style={{ flex: 2, flexDirection: 'row', marginBottom: '6%' }}>
+            <View style={{ flex: 2, marginLeft: 10, marginTop: 15 }}>
               <Pressable
                 onPress={() => {
                   Global.settingsWindow = true
-                  this.setState({settingsWindow: true})
+                  this.setState({ settingsWindow: true })
                 }}
-                style={{flex: 1}}>
+                style={{ flex: 1 }}>
                 <FontAwesome
                   name={'settings-outline'}
                   size={35}
@@ -165,7 +155,7 @@ class ResultsByAddress extends Component {
                 />
               </Pressable>
             </View>
-            <View style={{flex: 8}}>
+            <View style={{ flex: 8 }}>
               <Text style={styles.Paragraph}>חיפוש לפי כתובת</Text>
               <Text style={styles.SmallText}>לחץ על המפה להגדלה</Text>
             </View>
@@ -183,7 +173,7 @@ class ResultsByAddress extends Component {
                   position: this.state.position,
                 })
               }}
-              style={{flex: 1}}>
+              style={{ flex: 1 }}>
               <WebView
                 ref={WEBVIEW_REF => (WebViewRef = WEBVIEW_REF)}
                 source={{
@@ -198,15 +188,15 @@ class ResultsByAddress extends Component {
                 onMessage={event => this.handleMessage(event)}
                 startInLoadingState={true}
                 scalesPageToFit={false}
-                onLoadEnd={event => this.setState({loadingWV: false})}
+                onLoadEnd={event => this.setState({ loadingWV: false })}
                 renderLoading={() => {
                   return (
                     <View
-                      style={{alignItems: 'center', justifyContent: 'center'}}>
+                      style={{ alignItems: 'center', justifyContent: 'center' }}>
                       <ActivityIndicator
                         color='#ff6a00'
                         size='large'
-                        style={{alignSelf: 'center'}}
+                        style={{ alignSelf: 'center' }}
                       />
                       <Text
                         style={{

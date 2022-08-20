@@ -1,19 +1,16 @@
 import React from 'react'
 import {
-  StyleSheet,
-  View,
-  Text,
   ActivityIndicator,
-  Pressable,
+  Pressable, Text, View
 } from 'react-native'
-import {styles} from './styles/FooterStyle'
+import { styles } from './styles/FooterStyle'
 const Footer = props => {
   if (props.loadingWV || props.isLoading) {
     return (
       <ActivityIndicator
         color='orange'
         size='large'
-        style={{marginTop: '30%'}}
+        style={{ marginTop: '30%' }}
       />
     )
   } else if (props.type === 'gps')
@@ -31,7 +28,7 @@ const Footer = props => {
           {' '}
           אופס !{' '}
         </Text>
-        <Text style={{color: 'black', fontWeight: 'bold', fontSize: 15}}>
+        <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 15 }}>
           {`
 או שאין אנטנות ברדיוס שהגדרתם ממיקומכם,
 או שלא הצלחנו למצוא את מיקומכם הנוכחי.
@@ -69,7 +66,7 @@ const Footer = props => {
             {' '}
             אופס !{' '}
           </Text>
-          <Text style={{color: 'black', fontWeight: 'bold', fontSize: 15}}>
+          <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 15 }}>
             {`
 כפי הנראה, 
 אין אנטנות בטווח הרדיוס מהמיקום שבחרתם.

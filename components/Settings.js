@@ -8,20 +8,16 @@
  * @version 1.0.0
  */
 
-import React, {Component, useState} from 'react'
+import Slider from '@react-native-community/slider'
+import React, { useState } from 'react'
 import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Switch,
   Pressable,
-  ScrollView,
+  ScrollView, Switch, Text, View
 } from 'react-native'
 import Animation from './Animation'
 import Global from './Global.js'
-import Slider from '@react-native-community/slider'
-import {styles} from './styles/SettingsStyle'
+import { styles } from './styles/SettingsStyle'
+
 const Settings = props => {
   const [distance, setDistance] = useState(1500)
   return (
@@ -37,7 +33,7 @@ const Settings = props => {
             marginBottom: 15,
           }}>
           <Slider
-            style={{margin: 15, minWidth: 200}}
+            style={{ margin: 15, minWidth: 200 }}
             minimumValue={500}
             maximumValue={4000}
             step={100}
@@ -54,8 +50,8 @@ const Settings = props => {
         <Text style={styles.SettingsText}>הצג אנטנות שמשדרות:</Text>
         <View style={styles.bottomBorder} />
 
-        <View style={{flexDirection: 'row', justifyContent: 'center', flex: 3}}>
-          <View style={{margin: 10, marginTop: 0}}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', flex: 3 }}>
+          <View style={{ margin: 10, marginTop: 0 }}>
             <Text
               style={{
                 fontFamily: 'SF-Pro-Text-Bold',
@@ -66,24 +62,24 @@ const Settings = props => {
               3G{' '}
             </Text>
             <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
               thumbColor={Global.g3Toggle ? '#00bd19' : '#a6a6a6'}
               ios_backgroundColor='#3e3e3e'
               value={Global.g3Toggle}
               onValueChange={
                 Global.g3Toggle
                   ? () => {
-                      Global.g3Toggle = false
-                      props.page.forceUpdate()
-                    }
+                    Global.g3Toggle = false
+                    props.page.forceUpdate()
+                  }
                   : () => {
-                      Global.g3Toggle = true
-                      props.page.forceUpdate()
-                    }
+                    Global.g3Toggle = true
+                    props.page.forceUpdate()
+                  }
               }
             />
           </View>
-          <View style={{margin: 10, marginTop: 0}}>
+          <View style={{ margin: 10, marginTop: 0 }}>
             <Text
               style={{
                 fontFamily: 'SF-Pro-Text-Bold',
@@ -94,24 +90,24 @@ const Settings = props => {
               4G{' '}
             </Text>
             <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
               thumbColor={Global.g4Toggle ? '#00bd19' : '#a6a6a6'}
               ios_backgroundColor='#3e3e3e'
               value={Global.g4Toggle}
               onValueChange={
                 Global.g4Toggle
                   ? () => {
-                      Global.g4Toggle = false
-                      props.page.forceUpdate()
-                    }
+                    Global.g4Toggle = false
+                    props.page.forceUpdate()
+                  }
                   : () => {
-                      Global.g4Toggle = true
-                      props.page.forceUpdate()
-                    }
+                    Global.g4Toggle = true
+                    props.page.forceUpdate()
+                  }
               }
             />
           </View>
-          <View style={{margin: 10, marginTop: 0}}>
+          <View style={{ margin: 10, marginTop: 0 }}>
             <Text
               style={{
                 fontFamily: 'SF-Pro-Text-Bold',
@@ -122,25 +118,25 @@ const Settings = props => {
               5G{' '}
             </Text>
             <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
               thumbColor={Global.g5Toggle ? '#00bd19' : '#a6a6a6'}
               ios_backgroundColor='#3e3e3e'
               value={Global.g5Toggle}
               onValueChange={
                 Global.g5Toggle
                   ? () => {
-                      Global.g5Toggle = false
-                      props.page.forceUpdate()
-                    }
+                    Global.g5Toggle = false
+                    props.page.forceUpdate()
+                  }
                   : () => {
-                      Global.g5Toggle = true
-                      props.page.forceUpdate()
-                    }
+                    Global.g5Toggle = true
+                    props.page.forceUpdate()
+                  }
               }
             />
           </View>
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'center', flex: 3}}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', flex: 3 }}>
           <Pressable
             onPress={e => {
               Global.settingsWindow = false

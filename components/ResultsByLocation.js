@@ -5,35 +5,27 @@
  * @version 1.0.0
  */
 
-import React, {Component} from 'react'
-import {
-  StyleSheet,
-  FlatList,
-  View,
-  Text,
-  Pressable,
-  StatusBar,
-  SafeAreaView,
-  PermissionsAndroid,
-  ActivityIndicator,
-} from 'react-native'
-import FontAwesome from 'react-native-vector-icons/Ionicons'
-import {WebView} from 'react-native-webview'
 import proj4 from 'proj4'
-import AntennaBlock from './AntennaBlock'
-import changeNavigationBarColor from 'react-native-navigation-bar-color'
+import React, { Component } from 'react'
+import {
+  ActivityIndicator, FlatList, PermissionsAndroid, Pressable, SafeAreaView, Text, View
+} from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
+import changeNavigationBarColor from 'react-native-navigation-bar-color'
+import FontAwesome from 'react-native-vector-icons/Ionicons'
+import { WebView } from 'react-native-webview'
+import AntennaBlock from './AntennaBlock'
 import Footer from './Footer'
-import Settings from './Settings'
 import Global from './Global.js'
+import Settings from './Settings'
+import { styles } from './styles/ResultsViewStyle.js'
 import AntennaDescription from './utils/AntennaDescription'
-import {styles} from './styles/ResultsViewStyle.js'
-import * as Utils from './utils/Utils'
 import * as Const from './utils/Constants'
+import * as Utils from './utils/Utils'
 
 var WebViewRef = ''
 class ResultsByLocation extends Component {
-  constructor () {
+  constructor() {
     super()
     this.state = {
       position: [],
@@ -54,7 +46,7 @@ class ResultsByLocation extends Component {
    *
    * @author [Alon Barenboim]
    */
-  getPermissions () {
+  getPermissions() {
     return new Promise(async (resolve, reject) => {
       let permissions = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -69,7 +61,7 @@ class ResultsByLocation extends Component {
    *
    * @author [Alon Barenboim]
    */
-  fetchData () {
+  fetchData() {
     this.getPermissions()
       .then(res => {
         Geolocation.getCurrentPosition(
@@ -82,7 +74,7 @@ class ResultsByLocation extends Component {
             })
           },
           error => console.log(error.code, error.message),
-          {enableHighAccuracy: true, timeout: 25000, maximumAge: 20000},
+          { enableHighAccuracy: true, timeout: 25000, maximumAge: 20000 },
         )
       })
       .catch(Err => console.log('me' + Err))
@@ -100,23 +92,23 @@ class ResultsByLocation extends Component {
     let data = JSON.parse(e.nativeEvent.data)
     return new Promise((resolve, reject) => {
       if (!data) {
-        this.setState({isLoading: false})
+        this.setState({ isLoading: false })
         reject('no data')
       } else {
         data = Utils.SortAntennasByDistance(data)
       }
       let FilteredSortedList = Utils.FilterAntennasByTech(data)
-      resolve(this.setState({retDataFromWeb: FilteredSortedList, isLoading: false}))
+      resolve(this.setState({ retDataFromWeb: FilteredSortedList, isLoading: false }))
     }).catch(e => console.error(e))
   }
 
   reRenderPage = () => {
     this.fetchData()
     WebViewRef && WebViewRef.reload()
-    this.setState({retDataFromWeb: '', isLoading: true})
+    this.setState({ retDataFromWeb: '', isLoading: true })
   }
 
-  RenderItemView = ({item}) => {
+  RenderItemView = ({ item }) => {
     return (
       <View>
         <Pressable
@@ -160,20 +152,20 @@ class ResultsByLocation extends Component {
         </SafeAreaView>
       )
   }
-  CloseAntennaDescription = () => this.setState({antennaDescription: false})
-  render () {
+  CloseAntennaDescription = () => this.setState({ antennaDescription: false })
+  render() {
     return (
       <View style={styles.MainContainer}>
         {this.state.FirstClick ? <AntennaDescription reference={this} /> : null}
         <View style={styles.Header}>
-          <View style={{flex: 2, flexDirection: 'row', marginBottom: '6%'}}>
-            <View style={{flex: 2, marginLeft: 10, marginTop: 15}}>
+          <View style={{ flex: 2, flexDirection: 'row', marginBottom: '6%' }}>
+            <View style={{ flex: 2, marginLeft: 10, marginTop: 15 }}>
               <Pressable
                 onPress={() => {
                   Global.settingsWindow = true
-                  this.setState({settingsWindow: true})
+                  this.setState({ settingsWindow: true })
                 }}
-                style={{flex: 1}}>
+                style={{ flex: 1 }}>
                 <FontAwesome
                   name={'settings-outline'}
                   size={35}
@@ -181,7 +173,7 @@ class ResultsByLocation extends Component {
                 />
               </Pressable>
             </View>
-            <View style={{flex: 8}}>
+            <View style={{ flex: 8 }}>
               <Text style={styles.Paragraph}>חיפוש לפי מיקום</Text>
               <Text style={styles.SmallText}>לחץ על המפה להגדלה</Text>
             </View>
@@ -199,7 +191,7 @@ class ResultsByLocation extends Component {
                   position: this.state.position,
                 })
               }}
-              style={{flex: 1}}>
+              style={{ flex: 1 }}>
               <WebView
                 ref={WEBVIEW_REF => (WebViewRef = WEBVIEW_REF)}
                 source={{
@@ -214,15 +206,15 @@ class ResultsByLocation extends Component {
                 startInLoadingState={true}
                 scalesPageToFit={false}
                 onMessage={event => this.handleMessage(event)}
-                onLoadEnd={event => this.setState({loadingWV: false})}
+                onLoadEnd={event => this.setState({ loadingWV: false })}
                 renderLoading={() => {
                   return (
                     <View
-                      style={{alignItems: 'center', justifyContent: 'center'}}>
+                      style={{ alignItems: 'center', justifyContent: 'center' }}>
                       <ActivityIndicator
                         color='#ff6a00'
                         size='large'
-                        style={{alignSelf: 'center'}}
+                        style={{ alignSelf: 'center' }}
                       />
                       <Text
                         style={{

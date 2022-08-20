@@ -1,20 +1,17 @@
-import React from 'react'
-import Global from '../Global.js'
-import PermissionsAndroid from 'react-native'
+import Global from '../Global.js';
 
+export const Sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
-export const Sleep = ms => {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-function isStringStartsWithSubString (checkedString, startString) {
-  if (checkedString === '' || startString === '') return
+function isStringStartsWithSubString(checkedString, startString) {
+  if (checkedString === '' || startString === '') return;
   for (let x = 0; x < startString.length; x++) {
     if (startString.charAt(x) !== checkedString.charAt(x)) {
-      return false
+      return false;
     }
   }
-  return true
+  return true;
 }
 
 export const jsCode = (posX, posY, radius) => {
@@ -43,19 +40,19 @@ export const jsCode = (posX, posY, radius) => {
     posY +
     `, level:6, marker:true });
         var res = "";`
-  )
-}
+  );
+};
 
-const parseAntennaTechString = tech => {
-  let parsed = tech.split(' ')
-  let answer = [0, 0, 0]
+const parseAntennaTechString = (tech) => {
+  let parsed = tech.split(' ');
+  let answer = [0, 0, 0];
   for (var i = 0; i < parsed.length; i++) {
-    if (parsed[i] == '3') answer[0] = 1
-    if (parsed[i] == '4') answer[1] = 1
-    if (parsed[i] == '5') answer[2] = 1
+    if (parsed[i] == '3') answer[0] = 1;
+    if (parsed[i] == '4') answer[1] = 1;
+    if (parsed[i] == '5') answer[2] = 1;
   }
-  return answer
-}
+  return answer;
+};
 /**
  * FilterByName gets strArray which is an array of city\street names,
  * filters the names which are not starting with 'name' string, and returns
@@ -66,16 +63,16 @@ const parseAntennaTechString = tech => {
  * @param {string} param - 'שם_ישוב'\'שם_רחוב'
  * @author Alon Barenboim
  */
-export function FilterByName (strArray, name, param) {
-  if (name === '') return []
-  var filteredArray = []
+export function FilterByName(strArray, name, param) {
+  if (name === '') return [];
+  var filteredArray = [];
   for (str of strArray) {
-    let nameType = param === 'שם_ישוב' ? str.שם_ישוב : str.שם_רחוב
+    let nameType = param === 'שם_ישוב' ? str.שם_ישוב : str.שם_רחוב;
     if (nameType && isStringStartsWithSubString(nameType, name)) {
-      filteredArray.push(nameType)
+      filteredArray.push(nameType);
     }
   }
-  return filteredArray
+  return filteredArray;
 }
 
 /**
@@ -85,61 +82,58 @@ export function FilterByName (strArray, name, param) {
  * @param e A nativeEvent contains list of antennas sent from WebView.
  * @author [Alon Barenboim]
  */
-export function cutSpacesFromString (Name) {
+export function cutSpacesFromString(Name) {
   for (let x = Name.length - 1; x > 0; x--) {
-    if (Name.charAt(x) === ' ') continue
+    if (Name.charAt(x) === ' ') continue;
     else {
-      let temp = Name.substring(0, x + 1)
-      return temp
+      let temp = Name.substring(0, x + 1);
+      return temp;
     }
   }
 }
 
-
-
-  /**
-   * FilterAntennasByTech gets an array of antennas,
-   * and returns a technology-specific antenna's filtered array
-   *
-   * @param data Antennas array
-   * @author [Alon Barenboim]
-   */
-   export function FilterAntennasByTech (data) {
-    let counter = 0,
-      FilteredList = []
-    for (let x = 0; x < data.length; x++) {
-      let bcastTechFlagArr = parseAntennaTechString(data[x].Fields[18].Value)
+/**
+ * FilterAntennasByTech gets an array of antennas,
+ * and returns a technology-specific antenna's filtered array
+ *
+ * @param data Antennas array
+ * @author [Alon Barenboim]
+ */
+export function FilterAntennasByTech(data) {
+  let counter = 0,
+    FilteredList = [];
+  for (let x = 0; x < data.length; x++) {
+    let bcastTechFlagArr = parseAntennaTechString(data[x].Fields[18].Value);
+    if (
+      (Global.g5Toggle && bcastTechFlagArr[2]) ||
+      (Global.g4Toggle && bcastTechFlagArr[1]) ||
+      (Global.g3Toggle && bcastTechFlagArr[0]) ||
+      (Global.g4Toggle && Global.g3Toggle && Global.g5Toggle)
+    ) {
+      FilteredList[counter] = data[x];
+      counter++;
+    }
+  }
+  return FilteredList;
+}
+/**
+ * SortAntennasByDistance gets an array of antennas,
+ * and returns it as a sorted array according to distance.
+ *
+ * @param data Antenna's array
+ * @author [Alon Barenboim]
+ */
+export function SortAntennasByDistance(data) {
+  for (let x = 0; x < data.length - 1; x++) {
+    let tempMinDistanceIdx = x;
+    for (let y = x + 1; y < data.length; y++)
       if (
-        (Global.g5Toggle && bcastTechFlagArr[2]) ||
-        (Global.g4Toggle && bcastTechFlagArr[1]) ||
-        (Global.g3Toggle && bcastTechFlagArr[0]) ||
-        (Global.g4Toggle && Global.g3Toggle && Global.g5Toggle)
-      ) {
-        FilteredList[counter] = data[x]
-        counter++
-      }
-    }
-    return FilteredList
+        parseInt(data[y].distance) < parseInt(data[tempMinDistanceIdx].distance)
+      )
+        tempMinDistanceIdx = y;
+    let tempEntry = data[x];
+    data[x] = data[tempMinDistanceIdx];
+    data[tempMinDistanceIdx] = tempEntry;
   }
-  /**
-   * SortAntennasByDistance gets an array of antennas,
-   * and returns it as a sorted array according to distance.
-   *
-   * @param data Antenna's array
-   * @author [Alon Barenboim]
-   */
-   export function SortAntennasByDistance (data) {
-    for (let x = 0; x < data.length - 1; x++) {
-      let tempMinDistanceIdx = x
-      for (let y = x + 1; y < data.length; y++)
-        if (
-          parseInt(data[y].distance) <
-          parseInt(data[tempMinDistanceIdx].distance)
-        )
-          tempMinDistanceIdx = y
-      let tempEntry = data[x]
-      data[x] = data[tempMinDistanceIdx]
-      data[tempMinDistanceIdx] = tempEntry
-    }
-    return data
-  }
+  return data;
+}

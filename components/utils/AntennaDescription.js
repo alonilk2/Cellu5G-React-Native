@@ -1,15 +1,11 @@
-import {styles} from '../styles/Default'
-import React, {Component, useState} from 'react'
+import React from 'react'
 import {
-  StyleSheet,
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  Image,
+  Image, Pressable,
+  ScrollView, Text, View
 } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/Ionicons'
 import Animation from '../Animation'
+import { styles } from '../styles/Default'
 
 const AntennaDescription = props => {
   let ref = props.reference
@@ -42,10 +38,10 @@ const AntennaDescription = props => {
           }}>
           <FontAwesome name={'arrow-back-outline'} size={30} />
         </Pressable>
-        <View style={{alignItems: 'center'}}>
+        <View style={{ alignItems: 'center' }}>
           <Image
-            source={{uri: 'https://alonilk2.github.io/map1/logo.png'}}
-            style={{width: 100, height: 100, marginTop: '3%'}}
+            source={{ uri: 'https://alonilk2.github.io/map1/logo.png' }}
+            style={{ width: 100, height: 100, marginTop: '3%' }}
           />
           <View style={styles.techContainer}>
             {techFlag[0] == 1 ? (

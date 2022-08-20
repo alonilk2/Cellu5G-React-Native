@@ -1,13 +1,7 @@
-import React, {useRef, useEffect} from 'react'
-import {Text, View} from 'react-native'
+import React from 'react'
 import Animated, {
-  withTiming,
-  withRepeat,
-  useSharedValue,
-  useAnimatedStyle,
-  Easing,
+  Easing, useAnimatedStyle, useSharedValue, withTiming
 } from 'react-native-reanimated'
-import {Dimensions} from 'react-native'
 
 const Animation = props => {
   let offset = useSharedValue(props.animationState)
@@ -16,7 +10,7 @@ const Animation = props => {
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: offset.value,
-      transform: [{translateX: placex.value * 255}],
+      transform: [{ translateX: placex.value * 255 }],
     }
   })
   offset.value = withTiming(1 - props.animationState, {
@@ -35,7 +29,7 @@ const Animation = props => {
     })
   return (
     <Animated.View // Special animatable View
-      style={[{...props.style}, animatedStyle]}>
+      style={[{ ...props.style }, animatedStyle]}>
       {props.children}
     </Animated.View>
   )

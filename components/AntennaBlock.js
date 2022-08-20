@@ -8,10 +8,9 @@
  * @version 1.0.0
  */
 import React from 'react'
-import {StyleSheet, View, Text, Image, Pressable} from 'react-native'
-import Animation from './Animation'
+import { Text, View } from 'react-native'
+import { styles } from './styles/AntennaBlockStyle'
 import CompanyLogo from './utils/CompanyLogoProvider'
-import {styles} from './styles/AntennaBlockStyle'
 const w = '15%'
 
 const AntennaBlock = props => {
@@ -64,14 +63,14 @@ const AntennaBlock = props => {
             <Text>
               {obj[2].FieldName}: {obj[2].Value}
             </Text>
-            <Text style={{color: 'black', flexWrap: 'wrap', flex: 1}}>
+            <Text style={{ color: 'black', flexWrap: 'wrap', flex: 1 }}>
               {obj[3].FieldName}: {obj[3].Value}
             </Text>
-            <Text style={{color: 'red', fontWeight: 'bold'}}>
+            <Text style={{ color: 'red', fontWeight: 'bold' }}>
               מרחק מהאנטנה: {dist}m
             </Text>
           </View>
-          <View style={{width: 80}}>{CompanyLogo(obj)}</View>
+          <View style={{ width: 80 }}>{CompanyLogo(obj)}</View>
         </View>
       </View>
     </View>

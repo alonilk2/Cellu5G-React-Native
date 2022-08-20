@@ -1,5 +1,5 @@
+import { Image, StyleSheet } from 'react-native'
 import React from 'react'
-import {Image, StyleSheet} from 'react-native'
 
 
 /**
@@ -15,7 +15,7 @@ export default companyLogo = obj => {
       return (
         <Image
           style={styles.logo}
-          source={{uri:'https://alonilk2.github.io/map1/cell_logo.png'}}
+          source={{ uri: 'https://alonilk2.github.io/map1/cell_logo.png' }}
         />
       )
       break
@@ -23,7 +23,7 @@ export default companyLogo = obj => {
       return (
         <Image
           style={styles.logo}
-          source={{uri:'https://alonilk2.github.io/map1/pel_logo.png'}}
+          source={{ uri: 'https://alonilk2.github.io/map1/pel_logo.png' }}
         />
       )
       break
@@ -31,7 +31,7 @@ export default companyLogo = obj => {
       return (
         <Image
           style={styles.logo}
-          source={{uri:'https://alonilk2.github.io/map1/par_logo.png'}}
+          source={{ uri: 'https://alonilk2.github.io/map1/par_logo.png' }}
         />
       )
       break

@@ -4,6 +4,5 @@ module.exports = {
     g4Toggle: true,
     g5Toggle: true,
     settingsWindow: false,
-
 }
 

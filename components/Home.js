@@ -5,35 +5,23 @@
  * @version 3.0.0
  */
 
-import React, {Component} from 'react'
+import React from 'react'
 import {
-  StyleSheet,
-  StatusBar,
-  View,
-  Text,
-  Modal,
-  ScrollView,
   Image,
-  ImageBackground,
-  Pressable,
-  Linking,
-  ActivityIndicator,
-  NativeModules,
-  Button,
+  ImageBackground, NativeModules, Pressable, StatusBar, Text, View
 } from 'react-native'
-import {WebView} from 'react-native-webview'
 import changeNavigationBarColor from 'react-native-navigation-bar-color'
-import Global from './Global'
-import Animation from './Animation'
 import FontAwesome from 'react-native-vector-icons/Ionicons'
-import {styles} from './styles/Default'
+import Animation from './Animation'
+import Global from './Global'
 import InfoWindow from './homescreen/InfoWindow'
+import { styles } from './styles/Default'
 import RenderLoadingView from './utils/InitialLoader'
-import {Sleep} from './utils/Utils'
-const {AdmobInitiator} = NativeModules
+import { Sleep } from './utils/Utils'
+const { AdmobInitiator } = NativeModules
 
 class Home extends React.Component {
-  constructor () {
+  constructor() {
     super()
     this.state = {
       infoWindow: false,
@@ -46,7 +34,7 @@ class Home extends React.Component {
     changeNavigationBarColor('transparent', false)
     this.CheckAdmobStatus()
   }
-  CloseInfoWindow = () => this.setState({infoWindow: false})
+  CloseInfoWindow = () => this.setState({ infoWindow: false })
 
   /**
    * CheckAdmobStatus check for AdMob request status every 0.5 seconds.
@@ -63,13 +51,13 @@ class Home extends React.Component {
       res = await AdmobInitiator.isAdLoaded().catch(e => console.log(e))
       if (res === 'success') {
         loaded = true
-        this.setState({adLoaded: true})
+        this.setState({ adLoaded: true })
       } else await Sleep(500)
     }
-    this.setState({adLoaded: true})
+    this.setState({ adLoaded: true })
   }
 
-  render () {
+  render() {
     if (this.state.adLoaded)
       return (
         <View style={styles.MainContainer}>
@@ -79,7 +67,7 @@ class Home extends React.Component {
             barStyle='light-content'
           />
           <ImageBackground
-            source={{uri: 'https://alonilk2.github.io/map1/bg.jpg'}}
+            source={{ uri: 'https://alonilk2.github.io/map1/bg.jpg' }}
             style={styles.bg1}>
             <Animation style={styles.bg} animationState={0}>
               {this.state.FirstInfoClick ? (
@@ -88,10 +76,10 @@ class Home extends React.Component {
                   CloseInfoWindow={this.CloseInfoWindow}></InfoWindow>
               ) : null}
 
-              <View style={{position: 'absolute', left: 25, top: 50}}>
+              <View style={{ position: 'absolute', left: 25, top: 50 }}>
                 <Pressable
                   onPress={e =>
-                    this.setState({FirstInfoClick: true, infoWindow: true})
+                    this.setState({ FirstInfoClick: true, infoWindow: true })
                   }>
                   <FontAwesome
                     name={'information-circle-outline'}
@@ -100,11 +88,11 @@ class Home extends React.Component {
                   />
                 </Pressable>
               </View>
-              <View style={{zIndex: 1, marginTop: '10%'}}>
-                <View style={{alignSelf: 'center', marginTop: '15%'}}>
+              <View style={{ zIndex: 1, marginTop: '10%' }}>
+                <View style={{ alignSelf: 'center', marginTop: '15%' }}>
                   <Image
-                    source={{uri: 'https://alonilk2.github.io/map1/logo.png'}}
-                    style={{width: 500, height: 500}}
+                    source={{ uri: 'https://alonilk2.github.io/map1/logo.png' }}
+                    style={{ width: 500, height: 500 }}
                   />
                 </View>
                 <Text
@@ -117,7 +105,7 @@ class Home extends React.Component {
                   }}>
                   חפש אנטנות לפי...
                 </Text>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   <Pressable
                     onPress={e => {
                       Global.settingsWindow = false

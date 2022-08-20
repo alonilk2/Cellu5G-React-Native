@@ -3,25 +3,18 @@
  * @version 4.0.0
  */
 
-import React, {Component} from 'react'
-import {
-  View,
-  Image,
-  StyleSheet,
-  ImageBackground,
-  TouchableOpacity,
-  Text,
-  TextInput,
-  NativeModules,
-} from 'react-native'
 import axios from 'axios'
+import React, { Component } from 'react'
+import {
+  ImageBackground, Text,
+  TextInput, TouchableOpacity, View
+} from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input'
-import Global from './Global.js'
+import { styles } from './styles/AddressStyle'
 import * as Utils from './utils/Utils'
-import {styles} from './styles/AddressStyle'
 
 export class CityInput extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       citiesObj: [],
@@ -31,14 +24,14 @@ export class CityInput extends Component {
       cityFlag: false,
     }
   }
-  async componentDidMount () {
+  async componentDidMount() {
     do {
       let url = `https://data.gov.il/api/3/action/datastore_search?offset=${this.state.counter}&resource_id=5c78e9fa-c2e2-4771-93ff-7f400a12f7ba`
       await axios
         .get(url)
         .then(res => {
           if (this.state.citiesObj.length === 0) {
-            this.setState({citiesObj: res.data.result.records})
+            this.setState({ citiesObj: res.data.result.records })
           } else {
             this.setState({
               citiesObj: this.state.citiesObj.concat(res.data.result.records),
@@ -55,17 +48,17 @@ export class CityInput extends Component {
     } while (this.state.lastResult === 100)
   }
 
-  handleListItemClick (item) {
+  handleListItemClick(item) {
     let newItem = Utils.cutSpacesFromString(item)
-    this.setState({query: newItem})
-    this.props.navigation.navigate('StreetInput', {item: newItem})
+    this.setState({ query: newItem })
+    this.props.navigation.navigate('StreetInput', { item: newItem })
   }
 
-  render () {
+  render() {
     return (
       <View style={styles.MainContainer}>
         <ImageBackground
-          source={{uri:'https://alonilk2.github.io/map1/bg.jpg'}}
+          source={{ uri: 'https://alonilk2.github.io/map1/bg.jpg' }}
           style={styles.bg1}>
           <View style={styles.bg}>
             <Autocomplete
@@ -78,24 +71,24 @@ export class CityInput extends Component {
               listStyle={styles.ListStyle}
               listContainerStyle={styles.ListContainer}
               inputContainerStyle={styles.FormContainer}
-              containerStyle={{zIndex: 1}}
+              containerStyle={{ zIndex: 1 }}
               renderTextInput={() => (
-                <View style={{flex: 1, justifyContent: 'center'}}>
+                <View style={{ flex: 1, justifyContent: 'center' }}>
                   <Text style={styles.FormTitle}> הכנס את שם הישוב </Text>
                   <TextInput
                     style={styles.TextInputStyle}
                     onChangeText={text => {
-                      this.setState({query: text, cityFlag: false})
+                      this.setState({ query: text, cityFlag: false })
                     }}
                     value={this.state.query}
                     onFocus={() => {
                       if (this.state.query === 'שם הישוב')
-                        this.setState({query: ''})
+                        this.setState({ query: '' })
                     }}
                   />
                 </View>
               )}
-              renderItem={({item, i}) => (
+              renderItem={({ item, i }) => (
                 <TouchableOpacity
                   key={item}
                   onPress={() => {
